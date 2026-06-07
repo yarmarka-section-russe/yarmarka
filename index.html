@@ -65,7 +65,7 @@
     margin-top: 6px;
   }
 
-  /* ── ÉTAPES ── */
+  /* ── STEPPER ── */
   .stepper {
     display: flex;
     justify-content: center;
@@ -130,16 +130,41 @@
     to   { opacity:1; transform: translateY(0); }
   }
 
+  /* ── LAYOUT RESPONSIVE ── */
   .container {
     max-width: 560px;
     margin: 0 auto;
     padding: 30px 20px 60px;
   }
 
-  /* ── PRODUITS ── */
+  /* Tablette et PC : layout plus large */
+  @media (min-width: 768px) {
+    .container { max-width: 720px; padding: 36px 32px 80px; }
+    header { padding: 50px 40px 24px; }
+    .stepper { max-width: 600px; padding-top: 32px; }
+  }
+
+  @media (min-width: 1024px) {
+    .container { max-width: 900px; }
+
+    /* Sur PC, page produits en 2 colonnes */
+    #product-list {
+      display: grid !important;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+    }
+
+    /* Page infos : formulaire centré et plus large */
+    #page-info .container { max-width: 560px; }
+
+    /* QR page centrée */
+    #page-qr .container { max-width: 600px; }
+  }
+
+  /* ── SECTION TITLE ── */
   .section-title {
     font-family: 'Playfair Display', serif;
-    font-size: 1.4rem;
+    font-size: clamp(1.2rem, 3vw, 1.6rem);
     color: var(--or);
     margin-bottom: 18px;
     display: flex;
@@ -153,6 +178,7 @@
     background: rgba(212,175,55,0.2);
   }
 
+  /* ── PRODUITS ── */
   #product-list {
     display: flex;
     flex-direction: column;
@@ -170,27 +196,28 @@
     transition: border-color 0.25s, background 0.25s;
   }
   .product-card:hover { border-color: rgba(212,175,55,0.35); background: rgba(255,255,255,0.06); }
-  .product-card.out-of-stock {
-    opacity: 0.4;
-    pointer-events: none;
-  }
+  .product-card.out-of-stock { opacity: 0.4; pointer-events: none; }
 
-  .product-info { flex: 1; }
+  .product-info { flex: 1; min-width: 0; }
   .product-name {
     font-family: 'Playfair Display', serif;
-    font-size: 1.05rem;
+    font-size: clamp(0.95rem, 2.5vw, 1.1rem);
     color: var(--creme);
   }
   .product-desc {
     font-size: 0.78rem;
     color: rgba(245,236,215,0.45);
     margin-top: 2px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
   .product-price {
     font-weight: 500;
     color: var(--or);
-    font-size: 1rem;
+    font-size: clamp(0.9rem, 2vw, 1rem);
     white-space: nowrap;
+    margin-right: 4px;
   }
   .out-badge {
     font-size: 0.68rem;
@@ -202,26 +229,23 @@
     white-space: nowrap;
   }
 
-  .qty-control {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
+  .qty-control { display: flex; align-items: center; gap: 8px; }
   .qty-btn {
-    width: 30px; height: 30px;
+    width: 32px; height: 32px;
     border-radius: 50%;
     border: 1px solid rgba(212,175,55,0.35);
     background: transparent;
     color: var(--or);
-    font-size: 18px;
+    font-size: 20px;
     cursor: pointer;
     display: flex; align-items: center; justify-content: center;
     transition: all 0.2s;
     line-height: 1;
+    flex-shrink: 0;
   }
   .qty-btn:hover { background: rgba(212,175,55,0.15); border-color: var(--or); }
   .qty-num {
-    min-width: 22px;
+    min-width: 24px;
     text-align: center;
     font-weight: 500;
     font-size: 1rem;
@@ -312,7 +336,6 @@
   .btn-primary:hover::after { left: 100%; }
   .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(192,57,43,0.35); }
   .btn-primary:disabled { opacity: 0.45; cursor: not-allowed; transform: none; }
-
   .btn-ghost {
     background: transparent;
     border: 1px solid rgba(212,175,55,0.3);
@@ -320,6 +343,15 @@
     margin-top: 12px;
   }
   .btn-ghost:hover { border-color: var(--or); background: rgba(212,175,55,0.08); }
+
+  /* Boutons côte à côte sur tablette/PC */
+  @media (min-width: 600px) {
+    .btn-row {
+      display: flex;
+      gap: 12px;
+    }
+    .btn-row .btn { margin-top: 0; }
+  }
 
   /* ── QR CODE PAGE ── */
   #page-qr { text-align: center; }
@@ -333,7 +365,7 @@
   }
   .order-num {
     font-family: 'Playfair Display', serif;
-    font-size: 2.5rem;
+    font-size: clamp(2rem, 6vw, 2.8rem);
     color: var(--or);
     letter-spacing: 0.1em;
   }
@@ -344,6 +376,9 @@
     padding: 18px;
     margin-top: 20px;
     text-align: left;
+    max-width: 400px;
+    margin-left: auto;
+    margin-right: auto;
   }
   .qr-info-row {
     display: flex;
@@ -355,15 +390,19 @@
   }
   .qr-info-row:last-child { border-bottom: none; }
   .qr-info-row strong { color: var(--creme); }
-
   .pickup-timer {
     font-family: 'Playfair Display', serif;
-    font-size: 1.8rem;
+    font-size: clamp(1.5rem, 4vw, 2rem);
     color: var(--or);
     margin-top: 20px;
   }
-  .pickup-timer span { font-size: 0.85rem; font-family: 'Rubik', sans-serif; color: rgba(245,236,215,0.5); display:block; margin-top:4px; }
-
+  .pickup-timer span {
+    font-size: 0.85rem;
+    font-family: 'Rubik', sans-serif;
+    color: rgba(245,236,215,0.5);
+    display: block;
+    margin-top: 4px;
+  }
   .pulse-ring {
     display: inline-block;
     width: 10px; height: 10px;
@@ -453,7 +492,7 @@
     <div class="section-title">Vos informations</div>
     <div class="form-group">
       <label>Votre prénom</label>
-      <input type="text" id="inp-name" placeholder="ex : Jean" autocomplete="given-name">
+      <input type="text" id="inp-name" placeholder="ex : Ivan" autocomplete="given-name">
     </div>
     <div class="form-group">
       <label>Numéro de téléphone</label>
@@ -464,10 +503,12 @@
       <select id="inp-time"></select>
     </div>
 
-    <button class="btn btn-primary" id="btn-confirm" onclick="confirmOrder()">
-      Valider ma commande
-    </button>
-    <button class="btn btn-ghost" onclick="goBack()">← Modifier mon panier</button>
+    <div class="btn-row" style="margin-top: 8px;">
+      <button class="btn btn-ghost" onclick="goBack()">← Modifier</button>
+      <button class="btn btn-primary" id="btn-confirm" onclick="confirmOrder()" style="margin-top:0;">
+        Valider ma commande
+      </button>
+    </div>
   </div>
 </div>
 
@@ -487,8 +528,7 @@
     </div>
 
     <div class="pickup-timer" id="pickup-display" style="text-align:center">
-      —
-      <span>heure de retrait</span>
+      — <span>heure de retrait</span>
     </div>
 
     <div class="qr-info" id="qr-summary"></div>
@@ -504,7 +544,7 @@
 
 <script>
 // ══════════════════════════════════════════
-// CONFIG SUPABASE  ← remplace ici
+// CONFIG SUPABASE
 // ══════════════════════════════════════════
 const SUPABASE_URL = 'https://bdrhgheeppcmwzjkvyyb.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJkcmhnaGVlcHBjbXd6amt2eXliIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA4MTE0ODYsImV4cCI6MjA5NjM4NzQ4Nn0.V6iV34Vr0AGPlvU886cjeDty-i8qJpwVHsCRjBvnlZg';
@@ -512,29 +552,21 @@ const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBh
 const { createClient } = supabase;
 const db = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-// ── État ──
 let products = [];
-let cart = {}; // { id: qty }
+let cart = {};
 
-// ── Init ──
 window.onload = async () => {
   populateTimePicker();
   await loadProducts();
 };
 
-// ── Charger les produits ──
 async function loadProducts() {
-  const { data, error } = await db
-    .from('products')
-    .select('*')
-    .order('name');
-
+  const { data, error } = await db.from('products').select('*').order('name');
   if (error) { showToast('Erreur de chargement'); return; }
   products = data;
   renderProducts();
 }
 
-// ── Afficher les produits ──
 function renderProducts() {
   const list = document.getElementById('product-list');
   if (!products.length) {
@@ -560,7 +592,6 @@ function renderProducts() {
   `).join('');
 }
 
-// ── Modifier quantité ──
 function changeQty(id, delta) {
   if (!cart[id]) cart[id] = 0;
   cart[id] = Math.max(0, cart[id] + delta);
@@ -568,7 +599,6 @@ function changeQty(id, delta) {
   updateCartSummary();
 }
 
-// ── Récap panier ──
 function updateCartSummary() {
   const items = Object.entries(cart).filter(([,q]) => q > 0);
   const summary = document.getElementById('cart-summary');
@@ -594,12 +624,10 @@ function updateCartSummary() {
   btn.disabled = false;
 }
 
-// ── Créneaux horaires (toutes les 5 min) ──
 function populateTimePicker() {
   const sel = document.getElementById('inp-time');
   const now = new Date();
   const slots = [];
-  // 40 créneaux = 3h20 de couverture
   for (let i = 2; i <= 40; i++) {
     const d = new Date(now.getTime() + i * 5 * 60000);
     const h = d.getHours().toString().padStart(2,'0');
@@ -609,20 +637,15 @@ function populateTimePicker() {
   sel.innerHTML = slots.map(s => `<option value="${s}">${s}</option>`).join('');
 }
 
-// ── Navigation ──
-function goToInfo() {
-  setStep(2);
-  showPage('page-info');
-}
-function goBack() {
-  setStep(1);
-  showPage('page-products');
-}
+function goToInfo() { setStep(2); showPage('page-info'); }
+function goBack()   { setStep(1); showPage('page-products'); }
+
 function showPage(id) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.getElementById(id).classList.add('active');
   window.scrollTo(0,0);
 }
+
 function setStep(n) {
   [1,2,3].forEach(i => {
     const el = document.getElementById('s'+i);
@@ -632,7 +655,6 @@ function setStep(n) {
   });
 }
 
-// ── Valider la commande ──
 async function confirmOrder() {
   const name  = document.getElementById('inp-name').value.trim();
   const phone = document.getElementById('inp-phone').value.trim();
@@ -675,7 +697,6 @@ async function confirmOrder() {
   showQR(data, items, total);
 }
 
-// ── Afficher le QR ──
 function showQR(order, items, total) {
   setStep(3);
   showPage('page-qr');
@@ -697,7 +718,7 @@ function showQR(order, items, total) {
 
   document.getElementById('qrcode').innerHTML = '';
   new QRCode(document.getElementById('qrcode'), {
-    text: order.id,          // UUID Supabase → unique
+    text: order.id,
     width: 200, height: 200,
     colorDark: '#1a1008',
     colorLight: '#ffffff',
@@ -705,7 +726,6 @@ function showQR(order, items, total) {
   });
 }
 
-// ── Toast ──
 function showToast(msg) {
   const t = document.getElementById('toast');
   t.textContent = msg;
