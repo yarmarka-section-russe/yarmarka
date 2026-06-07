@@ -16,7 +16,6 @@
     --border: #30363d;
     --text: #e6edf3;
     --muted: #7d8590;
-    --accent: #f78166;
     --green: #3fb950;
     --yellow: #d29922;
     --blue: #58a6ff;
@@ -25,6 +24,7 @@
   }
 
   * { margin:0; padding:0; box-sizing:border-box; }
+
   body {
     background: var(--bg);
     color: var(--text);
@@ -36,7 +36,7 @@
   .topbar {
     background: var(--surface);
     border-bottom: 1px solid var(--border);
-    padding: 14px 24px;
+    padding: 12px 16px;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -44,51 +44,61 @@
     top: 0;
     z-index: 100;
   }
+  @media (min-width: 768px) { .topbar { padding: 14px 24px; } }
+
   .topbar-title {
     font-family: 'JetBrains Mono', monospace;
-    font-size: 1rem;
+    font-size: clamp(0.8rem, 2.5vw, 1rem);
     font-weight: 700;
     color: var(--or);
     letter-spacing: 0.05em;
   }
-  .topbar-sub { font-size: 0.75rem; color: var(--muted); margin-top: 2px; }
+  .topbar-sub { font-size: 0.72rem; color: var(--muted); margin-top: 2px; }
   .live-badge {
     display: flex; align-items: center; gap: 6px;
-    font-size: 0.75rem; color: var(--green);
+    font-size: 0.72rem; color: var(--green);
     background: rgba(63,185,80,0.1);
     border: 1px solid rgba(63,185,80,0.3);
     border-radius: 20px;
-    padding: 4px 12px;
+    padding: 4px 10px;
+    white-space: nowrap;
   }
   .live-dot {
     width: 7px; height: 7px;
     border-radius: 50%;
     background: var(--green);
     animation: pulse-g 2s infinite;
+    flex-shrink: 0;
   }
-  @keyframes pulse-g {
-    0%,100% { opacity:1; }
-    50% { opacity:0.4; }
-  }
+  @keyframes pulse-g { 0%,100% { opacity:1; } 50% { opacity:0.4; } }
 
   /* ── ONGLETS ── */
   .tabs {
     display: flex;
     background: var(--surface);
     border-bottom: 1px solid var(--border);
-    padding: 0 24px;
-    gap: 4px;
+    padding: 0 8px;
+    gap: 0;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
   }
+  .tabs::-webkit-scrollbar { display: none; }
+  @media (min-width: 768px) { .tabs { padding: 0 24px; } }
+
   .tab {
-    padding: 12px 20px;
-    font-size: 0.85rem;
+    padding: 12px 14px;
+    font-size: 0.8rem;
     font-weight: 500;
     color: var(--muted);
     cursor: pointer;
     border-bottom: 2px solid transparent;
     transition: all 0.2s;
-    display: flex; align-items: center; gap: 7px;
+    display: flex; align-items: center; gap: 6px;
+    white-space: nowrap;
+    flex-shrink: 0;
   }
+  @media (min-width: 768px) { .tab { padding: 12px 20px; font-size: 0.85rem; } }
   .tab:hover { color: var(--text); }
   .tab.active { color: var(--or); border-bottom-color: var(--or); }
   .tab-badge {
@@ -102,94 +112,120 @@
     text-align: center;
   }
 
-  /* ── CONTENU ONGLETS ── */
-  .tab-content { display: none; padding: 24px; max-width: 1100px; margin: 0 auto; }
+  /* ── CONTENU ── */
+  .tab-content { display: none; padding: 16px; }
   .tab-content.active { display: block; }
+  @media (min-width: 768px) { .tab-content { padding: 24px; max-width: 1100px; margin: 0 auto; } }
 
   /* ── STATS ── */
   .stats {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-    gap: 14px;
-    margin-bottom: 28px;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    margin-bottom: 20px;
   }
+  @media (min-width: 600px) { .stats { grid-template-columns: repeat(2, 1fr); } }
+  @media (min-width: 900px) { .stats { grid-template-columns: repeat(3, 1fr); gap: 14px; margin-bottom: 28px; } }
+
   .stat-card {
     background: var(--surface);
     border: 1px solid var(--border);
     border-radius: 10px;
-    padding: 16px;
+    padding: 14px 16px;
   }
   .stat-val {
     font-family: 'JetBrains Mono', monospace;
-    font-size: 1.8rem;
+    font-size: clamp(1.4rem, 4vw, 1.8rem);
     font-weight: 700;
     color: var(--or);
   }
-  .stat-label { font-size: 0.75rem; color: var(--muted); margin-top: 4px; }
+  .stat-label { font-size: 0.72rem; color: var(--muted); margin-top: 4px; }
 
   /* ── COMMANDES ── */
-  .orders-grid { display: flex; flex-direction: column; gap: 12px; }
+  .orders-grid { display: flex; flex-direction: column; gap: 10px; }
 
   .order-card {
     background: var(--surface);
     border: 1px solid var(--border);
     border-radius: 12px;
-    padding: 18px 20px;
+    padding: 14px 16px;
     display: grid;
-    grid-template-columns: 60px 1fr auto;
-    gap: 14px;
-    align-items: start;
+    grid-template-columns: 50px 1fr;
+    grid-template-rows: auto auto;
+    gap: 10px 12px;
     animation: slideIn 0.35s ease;
-    transition: border-color 0.3s;
+    transition: border-color 0.3s, opacity 0.4s;
   }
+  /* Sur tablette+, layout 3 colonnes */
+  @media (min-width: 600px) {
+    .order-card {
+      grid-template-columns: 60px 1fr auto;
+      grid-template-rows: auto;
+      padding: 16px 20px;
+      align-items: start;
+    }
+  }
+
   .order-card:hover { border-color: rgba(212,175,55,0.35); }
-  .order-card.new-order { border-color: var(--or); animation: glow 0.6s ease; }
+  .order-card.deleting { opacity: 0; transform: translateX(30px); transition: opacity 0.4s ease, transform 0.4s ease; }
+
   @keyframes slideIn { from { opacity:0; transform: translateX(-10px); } to { opacity:1; transform:none; } }
-  @keyframes glow {
-    0%,100% { box-shadow: none; }
-    50%      { box-shadow: 0 0 20px rgba(212,175,55,0.3); }
-  }
 
   .order-num-badge {
     font-family: 'JetBrains Mono', monospace;
-    font-size: 1.3rem;
+    font-size: 1.1rem;
     font-weight: 700;
     color: var(--or);
     background: rgba(212,175,55,0.08);
     border: 1px solid rgba(212,175,55,0.2);
     border-radius: 8px;
-    padding: 10px;
+    padding: 8px 6px;
     text-align: center;
     line-height: 1;
+    align-self: start;
   }
 
-  .order-body {}
-  .order-customer { font-weight: 600; font-size: 1rem; }
-  .order-phone { font-size: 0.82rem; color: var(--muted); margin-top: 2px; }
-  .order-items {
-    margin-top: 10px;
-    display: flex; flex-wrap: wrap; gap: 6px;
-  }
+  .order-body { min-width: 0; }
+  .order-customer { font-weight: 600; font-size: 0.95rem; }
+  .order-phone { font-size: 0.8rem; color: var(--muted); margin-top: 2px; }
+  .order-items { margin-top: 8px; display: flex; flex-wrap: wrap; gap: 5px; }
   .item-chip {
     background: var(--surface2);
     border: 1px solid var(--border);
     border-radius: 6px;
-    padding: 3px 10px;
-    font-size: 0.8rem;
+    padding: 2px 8px;
+    font-size: 0.75rem;
     color: var(--text);
   }
   .order-meta {
-    margin-top: 8px;
-    font-size: 0.78rem;
+    margin-top: 6px;
+    font-size: 0.75rem;
     color: var(--muted);
-    display: flex; gap: 14px; flex-wrap: wrap;
+    display: flex; gap: 10px; flex-wrap: wrap;
   }
-  .order-meta span { display: flex; align-items: center; gap: 4px; }
 
-  .order-right { display: flex; flex-direction: column; align-items: flex-end; gap: 10px; }
+  /* Sur mobile, la colonne droite passe en dessous à droite */
+  .order-right {
+    grid-column: 1 / -1;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  @media (min-width: 600px) {
+    .order-right {
+      grid-column: auto;
+      flex-direction: column;
+      align-items: flex-end;
+      justify-content: flex-start;
+    }
+  }
+
   .order-total {
     font-family: 'JetBrains Mono', monospace;
-    font-size: 1.2rem;
+    font-size: 1.1rem;
     font-weight: 700;
     color: var(--green);
     white-space: nowrap;
@@ -199,20 +235,19 @@
     border: 1px solid rgba(88,166,255,0.3);
     color: var(--blue);
     border-radius: 6px;
-    padding: 4px 10px;
-    font-size: 0.8rem;
+    padding: 3px 8px;
+    font-size: 0.75rem;
     font-weight: 600;
     white-space: nowrap;
   }
-
   .btn-done {
     background: var(--green);
     color: #0d1117;
     border: none;
     border-radius: 8px;
-    padding: 8px 16px;
+    padding: 7px 14px;
     font-weight: 600;
-    font-size: 0.82rem;
+    font-size: 0.78rem;
     cursor: pointer;
     font-family: 'Inter', sans-serif;
     transition: all 0.2s;
@@ -223,17 +258,14 @@
 
   .empty-state {
     text-align: center;
-    padding: 60px 20px;
+    padding: 50px 20px;
     color: var(--muted);
     font-size: 0.9rem;
   }
-  .empty-state .icon { font-size: 3rem; margin-bottom: 12px; opacity: 0.4; }
+  .empty-state .icon { font-size: 2.5rem; margin-bottom: 10px; opacity: 0.4; }
 
   /* ── SCANNER ── */
-  .scanner-wrap {
-    max-width: 480px;
-    margin: 0 auto;
-  }
+  .scanner-wrap { max-width: 480px; margin: 0 auto; }
   #reader {
     border-radius: 12px;
     overflow: hidden;
@@ -244,18 +276,18 @@
     background: var(--surface);
     border: 1px solid var(--border);
     border-radius: 12px;
-    padding: 20px;
+    padding: 18px;
     display: none;
   }
   .scan-result.show { display: block; animation: slideIn 0.3s ease; }
   .scan-order-num {
     font-family: 'JetBrains Mono', monospace;
-    font-size: 2rem;
+    font-size: clamp(1.5rem, 5vw, 2rem);
     font-weight: 700;
     color: var(--or);
-    margin-bottom: 6px;
+    margin-bottom: 4px;
   }
-  .scan-name { font-size: 1.1rem; font-weight: 600; margin-bottom: 14px; }
+  .scan-name { font-size: 1rem; font-weight: 600; margin-bottom: 12px; }
   .scan-items { display: flex; flex-direction: column; gap: 6px; }
   .scan-item-row {
     display: flex;
@@ -263,7 +295,7 @@
     padding: 8px 12px;
     background: var(--surface2);
     border-radius: 8px;
-    font-size: 0.9rem;
+    font-size: 0.88rem;
   }
   .scan-total-row {
     display: flex;
@@ -271,7 +303,7 @@
     padding: 12px 0 0;
     border-top: 1px solid var(--border);
     margin-top: 6px;
-    font-size: 1.1rem;
+    font-size: 1.05rem;
     font-weight: 700;
     color: var(--green);
   }
@@ -290,9 +322,10 @@
     transition: all 0.2s;
   }
   .btn-terminate:hover { background: #ff6b63; }
+  .btn-terminate:disabled { opacity: 0.5; cursor: not-allowed; }
   .terminate-countdown {
     text-align: center;
-    margin-top: 12px;
+    margin-top: 10px;
     font-size: 0.8rem;
     color: var(--muted);
   }
@@ -302,18 +335,18 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 20px;
+    margin-bottom: 16px;
     flex-wrap: wrap;
-    gap: 12px;
+    gap: 10px;
   }
   .btn-add {
     background: var(--or);
     color: #0d1117;
     border: none;
     border-radius: 8px;
-    padding: 10px 20px;
+    padding: 9px 18px;
     font-weight: 700;
-    font-size: 0.85rem;
+    font-size: 0.82rem;
     cursor: pointer;
     font-family: 'Inter', sans-serif;
     transition: all 0.2s;
@@ -326,47 +359,72 @@
     border-radius: 12px;
     overflow: hidden;
   }
-  .prod-row {
-    display: grid;
-    grid-template-columns: 1fr 120px 100px 80px auto;
-    gap: 12px;
-    align-items: center;
-    padding: 14px 20px;
+
+  /* Mobile : cartes produits */
+  .prod-card {
+    padding: 14px 16px;
     border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 12px;
     transition: background 0.2s;
   }
-  .prod-row:last-child { border-bottom: none; }
-  .prod-row:hover { background: var(--surface2); }
-  .prod-row.header {
-    font-size: 0.72rem;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    color: var(--muted);
-    background: var(--surface2);
-    font-weight: 600;
-  }
-  .prod-name { font-weight: 500; }
-  .prod-desc { font-size: 0.78rem; color: var(--muted); margin-top: 2px; }
-  .prod-price { font-family: 'JetBrains Mono', monospace; color: var(--green); }
+  .prod-card:last-child { border-bottom: none; }
+  .prod-card:hover { background: var(--surface2); }
+  .prod-card-info { flex: 1; min-width: 0; }
+  .prod-card-name { font-weight: 500; font-size: 0.9rem; }
+  .prod-card-desc { font-size: 0.75rem; color: var(--muted); margin-top: 2px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .prod-card-price { font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; color: var(--green); white-space: nowrap; margin-right: 4px; }
+  .prod-card-actions { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
 
-  .stock-toggle {
-    display: flex; align-items: center; gap: 6px;
-    cursor: pointer;
+  /* Desktop : table */
+  .prod-row {
+    display: none;
   }
+  @media (min-width: 768px) {
+    .prod-card { display: none; }
+    .prod-row {
+      display: grid;
+      grid-template-columns: 1fr 140px 90px 70px auto;
+      gap: 12px;
+      align-items: center;
+      padding: 13px 20px;
+      border-bottom: 1px solid var(--border);
+      transition: background 0.2s;
+    }
+    .prod-row:last-child { border-bottom: none; }
+    .prod-row:hover { background: var(--surface2); }
+    .prod-row.header {
+      font-size: 0.7rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--muted);
+      background: var(--surface2);
+      font-weight: 600;
+    }
+    .prod-row.header:hover { background: var(--surface2); }
+    .prod-name { font-weight: 500; font-size: 0.9rem; }
+    .prod-desc { font-size: 0.75rem; color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .prod-price { font-family: 'JetBrains Mono', monospace; color: var(--green); font-size: 0.9rem; }
+    .prod-actions { display: flex; gap: 6px; }
+  }
+
+  /* Toggle stock */
   .toggle-switch {
-    width: 36px; height: 20px;
+    width: 34px; height: 18px;
     background: var(--border);
-    border-radius: 10px;
+    border-radius: 9px;
     position: relative;
     transition: background 0.2s;
     cursor: pointer;
     border: none;
+    flex-shrink: 0;
   }
   .toggle-switch::after {
     content: '';
     position: absolute;
     top: 2px; left: 2px;
-    width: 16px; height: 16px;
+    width: 14px; height: 14px;
     background: white;
     border-radius: 50%;
     transition: left 0.2s;
@@ -374,37 +432,36 @@
   .toggle-switch.on { background: var(--green); }
   .toggle-switch.on::after { left: 18px; }
 
-  .prod-actions { display: flex; gap: 8px; }
   .btn-edit, .btn-del {
     border: 1px solid var(--border);
     background: transparent;
     color: var(--text);
     border-radius: 6px;
-    padding: 5px 10px;
-    font-size: 0.75rem;
+    padding: 5px 8px;
+    font-size: 0.72rem;
     cursor: pointer;
     transition: all 0.2s;
     font-family: 'Inter', sans-serif;
   }
   .btn-edit:hover { border-color: var(--blue); color: var(--blue); }
-  .btn-del:hover { border-color: var(--red); color: var(--red); }
+  .btn-del:hover  { border-color: var(--red);  color: var(--red);  }
 
   /* ── MODAL ── */
   .modal-overlay {
     display: none;
     position: fixed; inset: 0;
-    background: rgba(0,0,0,0.7);
+    background: rgba(0,0,0,0.75);
     z-index: 200;
     align-items: center;
     justify-content: center;
-    padding: 20px;
+    padding: 16px;
   }
   .modal-overlay.open { display: flex; }
   .modal {
     background: var(--surface);
     border: 1px solid var(--border);
     border-radius: 16px;
-    padding: 28px;
+    padding: 24px;
     width: 100%;
     max-width: 440px;
     animation: fadeUp 0.3s ease;
@@ -412,14 +469,14 @@
   @keyframes fadeUp { from { opacity:0; transform: translateY(20px); } to { opacity:1; transform:none; } }
   .modal h3 {
     font-family: 'JetBrains Mono', monospace;
-    font-size: 1rem;
+    font-size: 0.95rem;
     color: var(--or);
-    margin-bottom: 20px;
+    margin-bottom: 18px;
   }
-  .modal-field { margin-bottom: 14px; }
+  .modal-field { margin-bottom: 12px; }
   .modal-field label {
     display: block;
-    font-size: 0.75rem;
+    font-size: 0.72rem;
     color: var(--muted);
     text-transform: uppercase;
     letter-spacing: 0.08em;
@@ -430,7 +487,7 @@
     background: var(--surface2);
     border: 1px solid var(--border);
     border-radius: 8px;
-    padding: 10px 14px;
+    padding: 10px 12px;
     color: var(--text);
     font-family: 'Inter', sans-serif;
     font-size: 0.9rem;
@@ -439,7 +496,7 @@
   }
   .modal-field input:focus, .modal-field textarea:focus { border-color: var(--or); }
   .modal-field textarea { height: 70px; resize: vertical; }
-  .modal-actions { display: flex; gap: 10px; margin-top: 20px; }
+  .modal-actions { display: flex; gap: 10px; margin-top: 18px; }
   .btn-save {
     flex: 1;
     background: var(--or);
@@ -466,37 +523,38 @@
   }
   .btn-cancel:hover { border-color: var(--text); }
 
-  /* ── NOTIFICATION ── */
+  /* ── NOTIFICATIONS ── */
   #notif-container {
     position: fixed;
-    top: 70px; right: 20px;
+    top: 60px; right: 12px;
     z-index: 300;
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 8px;
+    max-width: 280px;
   }
+  @media (min-width: 768px) { #notif-container { top: 70px; right: 20px; max-width: 300px; } }
   .notif {
     background: var(--surface);
     border: 1px solid var(--or);
     border-radius: 12px;
-    padding: 14px 18px;
-    width: 280px;
+    padding: 12px 16px;
     box-shadow: 0 4px 20px rgba(0,0,0,0.4);
     animation: slideInRight 0.35s ease;
   }
   @keyframes slideInRight { from { opacity:0; transform: translateX(20px); } to { opacity:1; transform:none; } }
-  .notif-title { font-weight: 700; font-size: 0.85rem; color: var(--or); margin-bottom: 4px; }
-  .notif-body { font-size: 0.8rem; color: var(--muted); }
+  .notif-title { font-weight: 700; font-size: 0.82rem; color: var(--or); margin-bottom: 3px; }
+  .notif-body  { font-size: 0.77rem; color: var(--muted); }
 
   .spinner {
     display: inline-block;
-    width: 14px; height: 14px;
+    width: 13px; height: 13px;
     border: 2px solid rgba(255,255,255,0.2);
     border-top-color: white;
     border-radius: 50%;
     animation: spin 0.7s linear infinite;
     vertical-align: middle;
-    margin-right: 6px;
+    margin-right: 5px;
   }
   @keyframes spin { to { transform: rotate(360deg); } }
 </style>
@@ -528,9 +586,14 @@
 <!-- ══ ONGLET : COMMANDES ══ -->
 <div class="tab-content active" id="tab-orders-content">
   <div class="stats">
-    <div class="stat-card"><div class="stat-val" id="stat-pending">0</div><div class="stat-label">En attente</div></div>
-    <div class="stat-card"><div class="stat-val" id="stat-revenue">0 €</div><div class="stat-label">Chiffre d'affaires</div></div>
-    <div class="stat-card"><div class="stat-val" id="stat-total-orders">0</div><div class="stat-label">Commandes aujourd'hui</div></div>
+    <div class="stat-card">
+      <div class="stat-val" id="stat-pending">0</div>
+      <div class="stat-label">En attente</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-val" id="stat-total-orders">0</div>
+      <div class="stat-label">Commandes aujourd'hui</div>
+    </div>
   </div>
   <div class="orders-grid" id="orders-list">
     <div class="empty-state"><div class="icon">🕐</div>Aucune commande pour l'instant…</div>
@@ -540,10 +603,11 @@
 <!-- ══ ONGLET : SCANNER ══ -->
 <div class="tab-content" id="tab-scanner-content">
   <div class="scanner-wrap">
-    <h2 style="font-family:'JetBrains Mono',monospace; font-size:1rem; color:var(--or); margin-bottom:16px;">
-      Scanner le QR client
+    <h2 style="font-family:'JetBrains Mono',monospace; font-size:0.95rem; color:var(--or); margin-bottom:14px;">
+      📷 Scanner le QR client
     </h2>
     <div id="reader"></div>
+
     <div class="scan-result" id="scan-result">
       <div class="scan-order-num" id="sr-num">#000</div>
       <div class="scan-name" id="sr-name">—</div>
@@ -563,15 +627,16 @@
 <!-- ══ ONGLET : PRODUITS ══ -->
 <div class="tab-content" id="tab-products-content">
   <div class="products-header">
-    <h2 style="font-family:'JetBrains Mono',monospace; font-size:1rem; color:var(--or);">Gestion des produits</h2>
+    <h2 style="font-family:'JetBrains Mono',monospace; font-size:0.95rem; color:var(--or);">Gestion des produits</h2>
     <button class="btn-add" onclick="openProductModal()">+ Ajouter un produit</button>
   </div>
-  <div class="products-table">
+  <div class="products-table" id="products-table">
+    <!-- Header (desktop only via CSS) -->
     <div class="prod-row header">
       <div>Produit</div><div>Description</div><div>Prix</div><div>Stock</div><div>Actions</div>
     </div>
     <div id="products-list">
-      <div style="padding:20px; color:var(--muted); text-align:center;">Chargement…</div>
+      <div style="padding:20px; color:var(--muted); text-align:center; font-size:0.85rem;">Chargement…</div>
     </div>
   </div>
 </div>
@@ -604,7 +669,7 @@
 
 <script>
 // ══════════════════════════════════════════
-// CONFIG SUPABASE  ← remplace ici
+// CONFIG SUPABASE
 // ══════════════════════════════════════════
 const SUPABASE_URL = 'https://bdrhgheeppcmwzjkvyyb.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJkcmhnaGVlcHBjbXd6amt2eXliIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA4MTE0ODYsImV4cCI6MjA5NjM4NzQ4Nn0.V6iV34Vr0AGPlvU886cjeDty-i8qJpwVHsCRjBvnlZg';
@@ -612,7 +677,6 @@ const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBh
 const { createClient } = supabase;
 const db = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-// ── État ──
 let orders = [];
 let products = [];
 let editingProductId = null;
@@ -620,7 +684,6 @@ let currentScannedOrder = null;
 let terminateTimer = null;
 let scannerStarted = false;
 
-// ── Init ──
 window.onload = async () => {
   await loadOrders();
   await loadProducts();
@@ -650,15 +713,35 @@ function subscribeToOrders() {
       renderOrders();
       updateStats();
       showNotif(`🆕 Commande #${o.order_num}`, `${o.customer_name} · retrait ${o.pickup_time}`);
-      // Son de notification
-      try { new Audio('data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAA...').play(); } catch(e) {}
+      if (Notification.permission === 'granted') {
+        new Notification(`🆕 Commande #${o.order_num}`, { body: `${o.customer_name} · retrait ${o.pickup_time}` });
+      }
     })
     .on('postgres_changes', { event: 'DELETE', schema: 'public', table: 'orders' }, payload => {
-      orders = orders.filter(o => o.id !== payload.old.id);
-      renderOrders();
+      // ✅ SYNC : quand une commande est supprimée (depuis scanner OU depuis liste),
+      //    on l'enlève partout
+      const deletedId = payload.old.id;
+      removeOrderFromList(deletedId);
       updateStats();
     })
     .subscribe();
+}
+
+// Supprime une commande de la liste avec animation
+function removeOrderFromList(id) {
+  orders = orders.filter(o => o.id !== id);
+  // Animation de sortie sur la carte si elle est affichée
+  const card = document.getElementById('order-' + id);
+  if (card) {
+    card.classList.add('deleting');
+    setTimeout(() => {
+      renderOrders();
+      updateStats();
+    }, 400);
+  } else {
+    renderOrders();
+    updateStats();
+  }
 }
 
 function renderOrders() {
@@ -682,7 +765,7 @@ function renderOrders() {
         <div class="order-phone">📞 ${o.customer_phone}</div>
         <div class="order-items">${chips}</div>
         <div class="order-meta">
-          <span>🕐 Reçue : ${new Date(o.created_at).toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'})}</span>
+          <span>🕐 ${new Date(o.created_at).toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'})}</span>
         </div>
       </div>
       <div class="order-right">
@@ -696,21 +779,26 @@ function renderOrders() {
 
 function updateStats() {
   document.getElementById('stat-pending').textContent = orders.length;
-  const revenue = orders.reduce((acc, o) => acc + (o.total || 0), 0);
-  document.getElementById('stat-revenue').textContent = revenue.toFixed(2).replace('.',',') + ' €';
   document.getElementById('stat-total-orders').textContent = orders.length;
 }
 
 async function markDone(id, btn) {
   btn.disabled = true;
   btn.innerHTML = '<span class="spinner"></span>';
-  // Attend 15s puis supprime
-  setTimeout(async () => {
-    await db.from('orders').delete().eq('id', id);
-  }, 15000);
-  btn.textContent = 'Suppression dans 15s…';
+  btn.textContent = '⏳ 15s…';
   btn.style.background = 'var(--yellow)';
   btn.style.color = '#0d1117';
+
+  let t = 15;
+  const interval = setInterval(() => {
+    t--;
+    btn.textContent = `⏳ ${t}s…`;
+    if (t <= 0) {
+      clearInterval(interval);
+      // La suppression déclenche le listener DELETE → retire de la liste auto
+      db.from('orders').delete().eq('id', id);
+    }
+  }, 1000);
 }
 
 // ─────────────────────────────────────────
@@ -726,20 +814,35 @@ function switchTab(name) {
     startScanner();
     scannerStarted = true;
   }
+  if (name === 'scanner') {
+    Notification.requestPermission();
+  }
 }
 
 function startScanner() {
   const html5QrCode = new Html5Qrcode("reader");
   html5QrCode.start(
     { facingMode: "environment" },
-    { fps: 10, qrbox: { width: 250, height: 250 } },
+    { fps: 10, qrbox: { width: 220, height: 220 } },
     async (decodedText) => {
       html5QrCode.pause();
       await handleScan(decodedText);
-      setTimeout(() => html5QrCode.resume(), 4000);
+      setTimeout(() => html5QrCode.resume(), 5000);
     },
     () => {}
-  );
+  ).catch(() => {
+    // Fallback caméra frontale si pas de caméra arrière
+    html5QrCode.start(
+      { facingMode: "user" },
+      { fps: 10, qrbox: { width: 220, height: 220 } },
+      async (decodedText) => {
+        html5QrCode.pause();
+        await handleScan(decodedText);
+        setTimeout(() => html5QrCode.resume(), 5000);
+      },
+      () => {}
+    );
+  });
 }
 
 async function handleScan(uuid) {
@@ -771,7 +874,11 @@ function showResult(order) {
   ).join('');
 
   document.getElementById('sr-total').textContent = order.total.toFixed(2).replace('.',',') + ' €';
-  document.getElementById('btn-terminate').disabled = false;
+  const btn = document.getElementById('btn-terminate');
+  btn.disabled = false;
+  btn.textContent = '✓ Terminer et encaisser';
+  btn.style.background = 'var(--red)';
+  btn.style.color = 'white';
   document.getElementById('terminate-msg').textContent = '';
   el.classList.add('show');
 }
@@ -784,16 +891,19 @@ async function terminateOrder() {
   btn.style.background = 'var(--green)';
   btn.style.color = '#0d1117';
 
+  const orderId = currentScannedOrder.id;
   let countdown = 15;
   const msg = document.getElementById('terminate-msg');
   msg.textContent = `Suppression dans ${countdown}s…`;
 
-  terminateTimer = setInterval(() => {
+  terminateTimer = setInterval(async () => {
     countdown--;
     msg.textContent = `Suppression dans ${countdown}s…`;
     if (countdown <= 0) {
       clearInterval(terminateTimer);
-      db.from('orders').delete().eq('id', currentScannedOrder.id);
+      // ✅ La suppression Supabase déclenche le listener DELETE en temps réel
+      //    → retire automatiquement de l'onglet Commandes aussi
+      await db.from('orders').delete().eq('id', orderId);
       document.getElementById('scan-result').classList.remove('show');
       currentScannedOrder = null;
     }
@@ -812,22 +922,31 @@ async function loadProducts() {
 function renderProducts() {
   const list = document.getElementById('products-list');
   if (!products.length) {
-    list.innerHTML = '<div style="padding:20px; color:var(--muted); text-align:center;">Aucun produit. Ajoutez-en un !</div>';
+    list.innerHTML = '<div style="padding:20px; color:var(--muted); text-align:center; font-size:0.85rem;">Aucun produit. Ajoutez-en un !</div>';
     return;
   }
+
   list.innerHTML = products.map(p => `
-    <div class="prod-row">
-      <div>
-        <div class="prod-name">${p.name}</div>
+    <!-- MOBILE : carte -->
+    <div class="prod-card">
+      <div class="prod-card-info">
+        <div class="prod-card-name">${p.name}</div>
+        ${p.description ? `<div class="prod-card-desc">${p.description}</div>` : ''}
       </div>
+      <div class="prod-card-price">${p.price.toFixed(2).replace('.',',')} €</div>
+      <div class="prod-card-actions">
+        <button class="toggle-switch ${p.in_stock ? 'on' : ''}" onclick="toggleStock('${p.id}', ${p.in_stock})"></button>
+        <button class="btn-edit" onclick="openProductModal('${p.id}')">✏</button>
+        <button class="btn-del" onclick="deleteProduct('${p.id}')">🗑</button>
+      </div>
+    </div>
+    <!-- DESKTOP : ligne tableau -->
+    <div class="prod-row">
+      <div class="prod-name">${p.name}</div>
       <div class="prod-desc">${p.description || '—'}</div>
       <div class="prod-price">${p.price.toFixed(2).replace('.',',')} €</div>
       <div>
-        <button
-          class="toggle-switch ${p.in_stock ? 'on' : ''}"
-          title="${p.in_stock ? 'En stock' : 'Plus en stock'}"
-          onclick="toggleStock('${p.id}', ${p.in_stock})">
-        </button>
+        <button class="toggle-switch ${p.in_stock ? 'on' : ''}" title="${p.in_stock ? 'En stock' : 'Épuisé'}" onclick="toggleStock('${p.id}', ${p.in_stock})"></button>
       </div>
       <div class="prod-actions">
         <button class="btn-edit" onclick="openProductModal('${p.id}')">✏</button>
@@ -844,9 +963,7 @@ async function toggleStock(id, currentStatus) {
 
 function openProductModal(id = null) {
   editingProductId = id;
-  const modal = document.getElementById('modal-overlay');
   document.getElementById('modal-title').textContent = id ? 'Modifier le produit' : 'Nouveau produit';
-
   if (id) {
     const p = products.find(x => x.id === id);
     document.getElementById('m-name').value = p.name;
@@ -857,7 +974,7 @@ function openProductModal(id = null) {
     document.getElementById('m-desc').value = '';
     document.getElementById('m-price').value = '';
   }
-  modal.classList.add('open');
+  document.getElementById('modal-overlay').classList.add('open');
 }
 
 function closeModal(e) {
@@ -869,7 +986,6 @@ async function saveProduct() {
   const name  = document.getElementById('m-name').value.trim();
   const desc  = document.getElementById('m-desc').value.trim();
   const price = parseFloat(document.getElementById('m-price').value);
-
   if (!name || isNaN(price)) { alert('Merci de remplir le nom et le prix.'); return; }
 
   if (editingProductId) {
@@ -877,7 +993,6 @@ async function saveProduct() {
   } else {
     await db.from('products').insert({ name, description: desc, price, in_stock: true });
   }
-
   document.getElementById('modal-overlay').classList.remove('open');
   await loadProducts();
 }
@@ -897,12 +1012,6 @@ function showNotif(title, body) {
   n.className = 'notif';
   n.innerHTML = `<div class="notif-title">${title}</div><div class="notif-body">${body}</div>`;
   c.appendChild(n);
-  // Demande permission pour notifications navigateur
-  if (Notification.permission === 'granted') {
-    new Notification(title, { body, icon: '🏪' });
-  } else if (Notification.permission !== 'denied') {
-    Notification.requestPermission();
-  }
   setTimeout(() => n.remove(), 6000);
 }
 </script>
