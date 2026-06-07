@@ -1,0 +1,910 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ADMIN — ЯРМАРКА</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Inter:wght@400;500;600&display=swap');
+
+  :root {
+    --bg: #0d1117;
+    --surface: #161b22;
+    --surface2: #21262d;
+    --border: #30363d;
+    --text: #e6edf3;
+    --muted: #7d8590;
+    --accent: #f78166;
+    --green: #3fb950;
+    --yellow: #d29922;
+    --blue: #58a6ff;
+    --red: #f85149;
+    --or: #D4AF37;
+  }
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    min-height: 100vh;
+  }
+
+  /* ── TOP BAR ── */
+  .topbar {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 14px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .topbar-title {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--or);
+    letter-spacing: 0.05em;
+  }
+  .topbar-sub { font-size: 0.75rem; color: var(--muted); margin-top: 2px; }
+  .live-badge {
+    display: flex; align-items: center; gap: 6px;
+    font-size: 0.75rem; color: var(--green);
+    background: rgba(63,185,80,0.1);
+    border: 1px solid rgba(63,185,80,0.3);
+    border-radius: 20px;
+    padding: 4px 12px;
+  }
+  .live-dot {
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    background: var(--green);
+    animation: pulse-g 2s infinite;
+  }
+  @keyframes pulse-g {
+    0%,100% { opacity:1; }
+    50% { opacity:0.4; }
+  }
+
+  /* ── ONGLETS ── */
+  .tabs {
+    display: flex;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 0 24px;
+    gap: 4px;
+  }
+  .tab {
+    padding: 12px 20px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--muted);
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    transition: all 0.2s;
+    display: flex; align-items: center; gap: 7px;
+  }
+  .tab:hover { color: var(--text); }
+  .tab.active { color: var(--or); border-bottom-color: var(--or); }
+  .tab-badge {
+    background: var(--red);
+    color: white;
+    font-size: 10px;
+    border-radius: 10px;
+    padding: 1px 6px;
+    font-weight: 700;
+    min-width: 18px;
+    text-align: center;
+  }
+
+  /* ── CONTENU ONGLETS ── */
+  .tab-content { display: none; padding: 24px; max-width: 1100px; margin: 0 auto; }
+  .tab-content.active { display: block; }
+
+  /* ── STATS ── */
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 14px;
+    margin-bottom: 28px;
+  }
+  .stat-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px;
+  }
+  .stat-val {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--or);
+  }
+  .stat-label { font-size: 0.75rem; color: var(--muted); margin-top: 4px; }
+
+  /* ── COMMANDES ── */
+  .orders-grid { display: flex; flex-direction: column; gap: 12px; }
+
+  .order-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 18px 20px;
+    display: grid;
+    grid-template-columns: 60px 1fr auto;
+    gap: 14px;
+    align-items: start;
+    animation: slideIn 0.35s ease;
+    transition: border-color 0.3s;
+  }
+  .order-card:hover { border-color: rgba(212,175,55,0.35); }
+  .order-card.new-order { border-color: var(--or); animation: glow 0.6s ease; }
+  @keyframes slideIn { from { opacity:0; transform: translateX(-10px); } to { opacity:1; transform:none; } }
+  @keyframes glow {
+    0%,100% { box-shadow: none; }
+    50%      { box-shadow: 0 0 20px rgba(212,175,55,0.3); }
+  }
+
+  .order-num-badge {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: var(--or);
+    background: rgba(212,175,55,0.08);
+    border: 1px solid rgba(212,175,55,0.2);
+    border-radius: 8px;
+    padding: 10px;
+    text-align: center;
+    line-height: 1;
+  }
+
+  .order-body {}
+  .order-customer { font-weight: 600; font-size: 1rem; }
+  .order-phone { font-size: 0.82rem; color: var(--muted); margin-top: 2px; }
+  .order-items {
+    margin-top: 10px;
+    display: flex; flex-wrap: wrap; gap: 6px;
+  }
+  .item-chip {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 3px 10px;
+    font-size: 0.8rem;
+    color: var(--text);
+  }
+  .order-meta {
+    margin-top: 8px;
+    font-size: 0.78rem;
+    color: var(--muted);
+    display: flex; gap: 14px; flex-wrap: wrap;
+  }
+  .order-meta span { display: flex; align-items: center; gap: 4px; }
+
+  .order-right { display: flex; flex-direction: column; align-items: flex-end; gap: 10px; }
+  .order-total {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--green);
+    white-space: nowrap;
+  }
+  .pickup-time-badge {
+    background: rgba(88,166,255,0.1);
+    border: 1px solid rgba(88,166,255,0.3);
+    color: var(--blue);
+    border-radius: 6px;
+    padding: 4px 10px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+
+  .btn-done {
+    background: var(--green);
+    color: #0d1117;
+    border: none;
+    border-radius: 8px;
+    padding: 8px 16px;
+    font-weight: 600;
+    font-size: 0.82rem;
+    cursor: pointer;
+    font-family: 'Inter', sans-serif;
+    transition: all 0.2s;
+    white-space: nowrap;
+  }
+  .btn-done:hover { background: #4dc761; transform: scale(1.04); }
+  .btn-done:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+
+  .empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--muted);
+    font-size: 0.9rem;
+  }
+  .empty-state .icon { font-size: 3rem; margin-bottom: 12px; opacity: 0.4; }
+
+  /* ── SCANNER ── */
+  .scanner-wrap {
+    max-width: 480px;
+    margin: 0 auto;
+  }
+  #reader {
+    border-radius: 12px;
+    overflow: hidden;
+    border: 2px solid var(--border);
+  }
+  .scan-result {
+    margin-top: 20px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+    display: none;
+  }
+  .scan-result.show { display: block; animation: slideIn 0.3s ease; }
+  .scan-order-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--or);
+    margin-bottom: 6px;
+  }
+  .scan-name { font-size: 1.1rem; font-weight: 600; margin-bottom: 14px; }
+  .scan-items { display: flex; flex-direction: column; gap: 6px; }
+  .scan-item-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 12px;
+    background: var(--surface2);
+    border-radius: 8px;
+    font-size: 0.9rem;
+  }
+  .scan-total-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 12px 0 0;
+    border-top: 1px solid var(--border);
+    margin-top: 6px;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--green);
+  }
+  .btn-terminate {
+    width: 100%;
+    margin-top: 16px;
+    background: var(--red);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    padding: 14px;
+    font-weight: 700;
+    font-size: 1rem;
+    cursor: pointer;
+    font-family: 'Inter', sans-serif;
+    transition: all 0.2s;
+  }
+  .btn-terminate:hover { background: #ff6b63; }
+  .terminate-countdown {
+    text-align: center;
+    margin-top: 12px;
+    font-size: 0.8rem;
+    color: var(--muted);
+  }
+
+  /* ── PRODUITS ── */
+  .products-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  .btn-add {
+    background: var(--or);
+    color: #0d1117;
+    border: none;
+    border-radius: 8px;
+    padding: 10px 20px;
+    font-weight: 700;
+    font-size: 0.85rem;
+    cursor: pointer;
+    font-family: 'Inter', sans-serif;
+    transition: all 0.2s;
+  }
+  .btn-add:hover { background: #e0be3f; }
+
+  .products-table {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+  }
+  .prod-row {
+    display: grid;
+    grid-template-columns: 1fr 120px 100px 80px auto;
+    gap: 12px;
+    align-items: center;
+    padding: 14px 20px;
+    border-bottom: 1px solid var(--border);
+    transition: background 0.2s;
+  }
+  .prod-row:last-child { border-bottom: none; }
+  .prod-row:hover { background: var(--surface2); }
+  .prod-row.header {
+    font-size: 0.72rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+    background: var(--surface2);
+    font-weight: 600;
+  }
+  .prod-name { font-weight: 500; }
+  .prod-desc { font-size: 0.78rem; color: var(--muted); margin-top: 2px; }
+  .prod-price { font-family: 'JetBrains Mono', monospace; color: var(--green); }
+
+  .stock-toggle {
+    display: flex; align-items: center; gap: 6px;
+    cursor: pointer;
+  }
+  .toggle-switch {
+    width: 36px; height: 20px;
+    background: var(--border);
+    border-radius: 10px;
+    position: relative;
+    transition: background 0.2s;
+    cursor: pointer;
+    border: none;
+  }
+  .toggle-switch::after {
+    content: '';
+    position: absolute;
+    top: 2px; left: 2px;
+    width: 16px; height: 16px;
+    background: white;
+    border-radius: 50%;
+    transition: left 0.2s;
+  }
+  .toggle-switch.on { background: var(--green); }
+  .toggle-switch.on::after { left: 18px; }
+
+  .prod-actions { display: flex; gap: 8px; }
+  .btn-edit, .btn-del {
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--text);
+    border-radius: 6px;
+    padding: 5px 10px;
+    font-size: 0.75rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: 'Inter', sans-serif;
+  }
+  .btn-edit:hover { border-color: var(--blue); color: var(--blue); }
+  .btn-del:hover { border-color: var(--red); color: var(--red); }
+
+  /* ── MODAL ── */
+  .modal-overlay {
+    display: none;
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.7);
+    z-index: 200;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+  .modal-overlay.open { display: flex; }
+  .modal {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 28px;
+    width: 100%;
+    max-width: 440px;
+    animation: fadeUp 0.3s ease;
+  }
+  @keyframes fadeUp { from { opacity:0; transform: translateY(20px); } to { opacity:1; transform:none; } }
+  .modal h3 {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 1rem;
+    color: var(--or);
+    margin-bottom: 20px;
+  }
+  .modal-field { margin-bottom: 14px; }
+  .modal-field label {
+    display: block;
+    font-size: 0.75rem;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 6px;
+  }
+  .modal-field input, .modal-field textarea {
+    width: 100%;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 14px;
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    font-size: 0.9rem;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .modal-field input:focus, .modal-field textarea:focus { border-color: var(--or); }
+  .modal-field textarea { height: 70px; resize: vertical; }
+  .modal-actions { display: flex; gap: 10px; margin-top: 20px; }
+  .btn-save {
+    flex: 1;
+    background: var(--or);
+    color: #0d1117;
+    border: none;
+    border-radius: 8px;
+    padding: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: 'Inter', sans-serif;
+    transition: all 0.2s;
+  }
+  .btn-save:hover { background: #e0be3f; }
+  .btn-cancel {
+    flex: 1;
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--text);
+    border-radius: 8px;
+    padding: 12px;
+    cursor: pointer;
+    font-family: 'Inter', sans-serif;
+    transition: all 0.2s;
+  }
+  .btn-cancel:hover { border-color: var(--text); }
+
+  /* ── NOTIFICATION ── */
+  #notif-container {
+    position: fixed;
+    top: 70px; right: 20px;
+    z-index: 300;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .notif {
+    background: var(--surface);
+    border: 1px solid var(--or);
+    border-radius: 12px;
+    padding: 14px 18px;
+    width: 280px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+    animation: slideInRight 0.35s ease;
+  }
+  @keyframes slideInRight { from { opacity:0; transform: translateX(20px); } to { opacity:1; transform:none; } }
+  .notif-title { font-weight: 700; font-size: 0.85rem; color: var(--or); margin-bottom: 4px; }
+  .notif-body { font-size: 0.8rem; color: var(--muted); }
+
+  .spinner {
+    display: inline-block;
+    width: 14px; height: 14px;
+    border: 2px solid rgba(255,255,255,0.2);
+    border-top-color: white;
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+    vertical-align: middle;
+    margin-right: 6px;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+</style>
+</head>
+<body>
+
+<!-- Topbar -->
+<div class="topbar">
+  <div>
+    <div class="topbar-title">⚙ ADMIN · ЯРМАРКА</div>
+    <div class="topbar-sub">Interface de gestion</div>
+  </div>
+  <div class="live-badge"><div class="live-dot"></div>Temps réel</div>
+</div>
+
+<!-- Onglets -->
+<div class="tabs">
+  <div class="tab active" onclick="switchTab('orders')" id="tab-orders">
+    📋 Commandes <span class="tab-badge" id="order-count-badge">0</span>
+  </div>
+  <div class="tab" onclick="switchTab('scanner')" id="tab-scanner">
+    📷 Scanner QR
+  </div>
+  <div class="tab" onclick="switchTab('products')" id="tab-products">
+    🛒 Produits
+  </div>
+</div>
+
+<!-- ══ ONGLET : COMMANDES ══ -->
+<div class="tab-content active" id="tab-orders-content">
+  <div class="stats">
+    <div class="stat-card"><div class="stat-val" id="stat-pending">0</div><div class="stat-label">En attente</div></div>
+    <div class="stat-card"><div class="stat-val" id="stat-revenue">0 €</div><div class="stat-label">Chiffre d'affaires</div></div>
+    <div class="stat-card"><div class="stat-val" id="stat-total-orders">0</div><div class="stat-label">Commandes aujourd'hui</div></div>
+  </div>
+  <div class="orders-grid" id="orders-list">
+    <div class="empty-state"><div class="icon">🕐</div>Aucune commande pour l'instant…</div>
+  </div>
+</div>
+
+<!-- ══ ONGLET : SCANNER ══ -->
+<div class="tab-content" id="tab-scanner-content">
+  <div class="scanner-wrap">
+    <h2 style="font-family:'JetBrains Mono',monospace; font-size:1rem; color:var(--or); margin-bottom:16px;">
+      Scanner le QR client
+    </h2>
+    <div id="reader"></div>
+    <div class="scan-result" id="scan-result">
+      <div class="scan-order-num" id="sr-num">#000</div>
+      <div class="scan-name" id="sr-name">—</div>
+      <div class="scan-items" id="sr-items"></div>
+      <div class="scan-total-row">
+        <span>Total à encaisser</span>
+        <span id="sr-total">0,00 €</span>
+      </div>
+      <button class="btn-terminate" onclick="terminateOrder()" id="btn-terminate">
+        ✓ Terminer et encaisser
+      </button>
+      <div class="terminate-countdown" id="terminate-msg"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ ONGLET : PRODUITS ══ -->
+<div class="tab-content" id="tab-products-content">
+  <div class="products-header">
+    <h2 style="font-family:'JetBrains Mono',monospace; font-size:1rem; color:var(--or);">Gestion des produits</h2>
+    <button class="btn-add" onclick="openProductModal()">+ Ajouter un produit</button>
+  </div>
+  <div class="products-table">
+    <div class="prod-row header">
+      <div>Produit</div><div>Description</div><div>Prix</div><div>Stock</div><div>Actions</div>
+    </div>
+    <div id="products-list">
+      <div style="padding:20px; color:var(--muted); text-align:center;">Chargement…</div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal produit -->
+<div class="modal-overlay" id="modal-overlay" onclick="closeModal(event)">
+  <div class="modal">
+    <h3 id="modal-title">Nouveau produit</h3>
+    <div class="modal-field">
+      <label>Nom du produit</label>
+      <input type="text" id="m-name" placeholder="ex : Blinis au saumon">
+    </div>
+    <div class="modal-field">
+      <label>Description (optionnelle)</label>
+      <textarea id="m-desc" placeholder="ex : Servis avec crème fraîche…"></textarea>
+    </div>
+    <div class="modal-field">
+      <label>Prix (€)</label>
+      <input type="number" id="m-price" placeholder="ex : 3.50" step="0.50" min="0">
+    </div>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="document.getElementById('modal-overlay').classList.remove('open')">Annuler</button>
+      <button class="btn-save" onclick="saveProduct()">Enregistrer</button>
+    </div>
+  </div>
+</div>
+
+<!-- Notifications -->
+<div id="notif-container"></div>
+
+<script>
+// ══════════════════════════════════════════
+// CONFIG SUPABASE  ← remplace ici
+// ══════════════════════════════════════════
+const SUPABASE_URL = 'https://bdrhgheeppcmwzjkvyyb.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJkcmhnaGVlcHBjbXd6amt2eXliIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA4MTE0ODYsImV4cCI6MjA5NjM4NzQ4Nn0.V6iV34Vr0AGPlvU886cjeDty-i8qJpwVHsCRjBvnlZg';
+
+const { createClient } = supabase;
+const db = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+// ── État ──
+let orders = [];
+let products = [];
+let editingProductId = null;
+let currentScannedOrder = null;
+let terminateTimer = null;
+let scannerStarted = false;
+
+// ── Init ──
+window.onload = async () => {
+  await loadOrders();
+  await loadProducts();
+  subscribeToOrders();
+};
+
+// ─────────────────────────────────────────
+// COMMANDES
+// ─────────────────────────────────────────
+async function loadOrders() {
+  const today = new Date().toISOString().split('T')[0];
+  const { data } = await db
+    .from('orders')
+    .select('*')
+    .gte('created_at', today)
+    .order('created_at', { ascending: false });
+  orders = data || [];
+  renderOrders();
+  updateStats();
+}
+
+function subscribeToOrders() {
+  db.channel('orders-realtime')
+    .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'orders' }, payload => {
+      const o = payload.new;
+      orders.unshift(o);
+      renderOrders();
+      updateStats();
+      showNotif(`🆕 Commande #${o.order_num}`, `${o.customer_name} · retrait ${o.pickup_time}`);
+      // Son de notification
+      try { new Audio('data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAA...').play(); } catch(e) {}
+    })
+    .on('postgres_changes', { event: 'DELETE', schema: 'public', table: 'orders' }, payload => {
+      orders = orders.filter(o => o.id !== payload.old.id);
+      renderOrders();
+      updateStats();
+    })
+    .subscribe();
+}
+
+function renderOrders() {
+  const list = document.getElementById('orders-list');
+  const badge = document.getElementById('order-count-badge');
+  badge.textContent = orders.length;
+
+  if (!orders.length) {
+    list.innerHTML = '<div class="empty-state"><div class="icon">🕐</div>Aucune commande pour l\'instant…</div>';
+    return;
+  }
+
+  list.innerHTML = orders.map(o => {
+    const items = o.items || [];
+    const chips = items.map(i => `<span class="item-chip">${i.name} ×${i.qty}</span>`).join('');
+    return `
+    <div class="order-card" id="order-${o.id}">
+      <div class="order-num-badge">#${o.order_num}</div>
+      <div class="order-body">
+        <div class="order-customer">${o.customer_name}</div>
+        <div class="order-phone">📞 ${o.customer_phone}</div>
+        <div class="order-items">${chips}</div>
+        <div class="order-meta">
+          <span>🕐 Reçue : ${new Date(o.created_at).toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'})}</span>
+        </div>
+      </div>
+      <div class="order-right">
+        <div class="order-total">${o.total.toFixed(2).replace('.',',')} €</div>
+        <div class="pickup-time-badge">⏰ ${o.pickup_time}</div>
+        <button class="btn-done" onclick="markDone('${o.id}', this)">✓ Terminé</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function updateStats() {
+  document.getElementById('stat-pending').textContent = orders.length;
+  const revenue = orders.reduce((acc, o) => acc + (o.total || 0), 0);
+  document.getElementById('stat-revenue').textContent = revenue.toFixed(2).replace('.',',') + ' €';
+  document.getElementById('stat-total-orders').textContent = orders.length;
+}
+
+async function markDone(id, btn) {
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span>';
+  // Attend 15s puis supprime
+  setTimeout(async () => {
+    await db.from('orders').delete().eq('id', id);
+  }, 15000);
+  btn.textContent = 'Suppression dans 15s…';
+  btn.style.background = 'var(--yellow)';
+  btn.style.color = '#0d1117';
+}
+
+// ─────────────────────────────────────────
+// SCANNER QR
+// ─────────────────────────────────────────
+function switchTab(name) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+  document.getElementById('tab-' + name).classList.add('active');
+  document.getElementById('tab-' + name + '-content').classList.add('active');
+
+  if (name === 'scanner' && !scannerStarted) {
+    startScanner();
+    scannerStarted = true;
+  }
+}
+
+function startScanner() {
+  const html5QrCode = new Html5Qrcode("reader");
+  html5QrCode.start(
+    { facingMode: "environment" },
+    { fps: 10, qrbox: { width: 250, height: 250 } },
+    async (decodedText) => {
+      html5QrCode.pause();
+      await handleScan(decodedText);
+      setTimeout(() => html5QrCode.resume(), 4000);
+    },
+    () => {}
+  );
+}
+
+async function handleScan(uuid) {
+  const { data, error } = await db.from('orders').select('*').eq('id', uuid).single();
+  if (error || !data) {
+    showResult(null);
+    return;
+  }
+  currentScannedOrder = data;
+  showResult(data);
+}
+
+function showResult(order) {
+  const el = document.getElementById('scan-result');
+  if (!order) {
+    el.innerHTML = '<div style="text-align:center; color:var(--red); padding:20px;">❌ QR Code invalide ou commande introuvable</div>';
+    el.classList.add('show');
+    return;
+  }
+  document.getElementById('sr-num').textContent = '#' + order.order_num;
+  document.getElementById('sr-name').textContent = order.customer_name + ' — ' + order.customer_phone;
+
+  const items = order.items || [];
+  document.getElementById('sr-items').innerHTML = items.map(i =>
+    `<div class="scan-item-row">
+      <span>${i.name} ×${i.qty}</span>
+      <strong>${(i.price * i.qty).toFixed(2).replace('.',',')} €</strong>
+    </div>`
+  ).join('');
+
+  document.getElementById('sr-total').textContent = order.total.toFixed(2).replace('.',',') + ' €';
+  document.getElementById('btn-terminate').disabled = false;
+  document.getElementById('terminate-msg').textContent = '';
+  el.classList.add('show');
+}
+
+async function terminateOrder() {
+  if (!currentScannedOrder) return;
+  const btn = document.getElementById('btn-terminate');
+  btn.disabled = true;
+  btn.textContent = '✓ Encaissé !';
+  btn.style.background = 'var(--green)';
+  btn.style.color = '#0d1117';
+
+  let countdown = 15;
+  const msg = document.getElementById('terminate-msg');
+  msg.textContent = `Suppression dans ${countdown}s…`;
+
+  terminateTimer = setInterval(() => {
+    countdown--;
+    msg.textContent = `Suppression dans ${countdown}s…`;
+    if (countdown <= 0) {
+      clearInterval(terminateTimer);
+      db.from('orders').delete().eq('id', currentScannedOrder.id);
+      document.getElementById('scan-result').classList.remove('show');
+      currentScannedOrder = null;
+    }
+  }, 1000);
+}
+
+// ─────────────────────────────────────────
+// PRODUITS
+// ─────────────────────────────────────────
+async function loadProducts() {
+  const { data } = await db.from('products').select('*').order('name');
+  products = data || [];
+  renderProducts();
+}
+
+function renderProducts() {
+  const list = document.getElementById('products-list');
+  if (!products.length) {
+    list.innerHTML = '<div style="padding:20px; color:var(--muted); text-align:center;">Aucun produit. Ajoutez-en un !</div>';
+    return;
+  }
+  list.innerHTML = products.map(p => `
+    <div class="prod-row">
+      <div>
+        <div class="prod-name">${p.name}</div>
+      </div>
+      <div class="prod-desc">${p.description || '—'}</div>
+      <div class="prod-price">${p.price.toFixed(2).replace('.',',')} €</div>
+      <div>
+        <button
+          class="toggle-switch ${p.in_stock ? 'on' : ''}"
+          title="${p.in_stock ? 'En stock' : 'Plus en stock'}"
+          onclick="toggleStock('${p.id}', ${p.in_stock})">
+        </button>
+      </div>
+      <div class="prod-actions">
+        <button class="btn-edit" onclick="openProductModal('${p.id}')">✏</button>
+        <button class="btn-del" onclick="deleteProduct('${p.id}')">🗑</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+async function toggleStock(id, currentStatus) {
+  await db.from('products').update({ in_stock: !currentStatus }).eq('id', id);
+  await loadProducts();
+}
+
+function openProductModal(id = null) {
+  editingProductId = id;
+  const modal = document.getElementById('modal-overlay');
+  document.getElementById('modal-title').textContent = id ? 'Modifier le produit' : 'Nouveau produit';
+
+  if (id) {
+    const p = products.find(x => x.id === id);
+    document.getElementById('m-name').value = p.name;
+    document.getElementById('m-desc').value = p.description || '';
+    document.getElementById('m-price').value = p.price;
+  } else {
+    document.getElementById('m-name').value = '';
+    document.getElementById('m-desc').value = '';
+    document.getElementById('m-price').value = '';
+  }
+  modal.classList.add('open');
+}
+
+function closeModal(e) {
+  if (e.target.id === 'modal-overlay')
+    document.getElementById('modal-overlay').classList.remove('open');
+}
+
+async function saveProduct() {
+  const name  = document.getElementById('m-name').value.trim();
+  const desc  = document.getElementById('m-desc').value.trim();
+  const price = parseFloat(document.getElementById('m-price').value);
+
+  if (!name || isNaN(price)) { alert('Merci de remplir le nom et le prix.'); return; }
+
+  if (editingProductId) {
+    await db.from('products').update({ name, description: desc, price }).eq('id', editingProductId);
+  } else {
+    await db.from('products').insert({ name, description: desc, price, in_stock: true });
+  }
+
+  document.getElementById('modal-overlay').classList.remove('open');
+  await loadProducts();
+}
+
+async function deleteProduct(id) {
+  if (!confirm('Supprimer ce produit ?')) return;
+  await db.from('products').delete().eq('id', id);
+  await loadProducts();
+}
+
+// ─────────────────────────────────────────
+// NOTIFICATIONS
+// ─────────────────────────────────────────
+function showNotif(title, body) {
+  const c = document.getElementById('notif-container');
+  const n = document.createElement('div');
+  n.className = 'notif';
+  n.innerHTML = `<div class="notif-title">${title}</div><div class="notif-body">${body}</div>`;
+  c.appendChild(n);
+  // Demande permission pour notifications navigateur
+  if (Notification.permission === 'granted') {
+    new Notification(title, { body, icon: '🏪' });
+  } else if (Notification.permission !== 'denied') {
+    Notification.requestPermission();
+  }
+  setTimeout(() => n.remove(), 6000);
+}
+</script>
+</body>
+</html>
