@@ -784,19 +784,34 @@ function updateStats() {
 
 async function markDone(id, btn) {
   btn.disabled = true;
-  btn.innerHTML = '<span class="spinner"></span>';
-  btn.textContent = '⏳ 15s…';
   btn.style.background = 'var(--yellow)';
   btn.style.color = '#0d1117';
 
   let t = 15;
-  const interval = setInterval(() => {
+  btn.textContent = `⏳ ${t}s…`;
+
+  const interval = setInterval(async () => {
     t--;
     btn.textContent = `⏳ ${t}s…`;
     if (t <= 0) {
       clearInterval(interval);
-      // La suppression déclenche le listener DELETE → retire de la liste auto
-      db.from('orders').delete().eq('id', id);
+      // Supprime dans Supabase
+      const { error } = await db.from('orders').delete().eq('id', id);
+      if (error) {
+        console.error('Erreur suppression:', error);
+      }
+      // Retire immédiatement du DOM et du tableau local (fallback si realtime lent)
+      orders = orders.filter(o => o.id !== id);
+      const card = document.getElementById('order-' + id);
+      if (card) {
+        card.style.transition = 'opacity 0.4s, transform 0.4s';
+        card.style.opacity = '0';
+        card.style.transform = 'translateX(30px)';
+        setTimeout(() => { renderOrders(); updateStats(); }, 400);
+      } else {
+        renderOrders();
+        updateStats();
+      }
     }
   }, 1000);
 }
@@ -901,9 +916,20 @@ async function terminateOrder() {
     msg.textContent = `Suppression dans ${countdown}s…`;
     if (countdown <= 0) {
       clearInterval(terminateTimer);
-      // ✅ La suppression Supabase déclenche le listener DELETE en temps réel
-      //    → retire automatiquement de l'onglet Commandes aussi
+      // Supprime dans Supabase
       await db.from('orders').delete().eq('id', orderId);
+      // Retire immédiatement du DOM et du tableau local (fallback si realtime lent)
+      orders = orders.filter(o => o.id !== orderId);
+      const card = document.getElementById('order-' + orderId);
+      if (card) {
+        card.style.transition = 'opacity 0.4s, transform 0.4s';
+        card.style.opacity = '0';
+        card.style.transform = 'translateX(30px)';
+        setTimeout(() => { renderOrders(); updateStats(); }, 400);
+      } else {
+        renderOrders();
+        updateStats();
+      }
       document.getElementById('scan-result').classList.remove('show');
       currentScannedOrder = null;
     }
