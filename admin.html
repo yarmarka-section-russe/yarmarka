@@ -317,7 +317,7 @@
       <input type="number" id="m-price" placeholder="ex : 3.50" step="0.50" min="0">
     </div>
     <div class="modal-actions">
-      <button class="btn-cancel" onclick="document.getElementById('modal-overlay').classList.remove('open')">Annuler</button>
+      <button class="btn-cancel" onclick="cancelModal()">Annuler</button>
       <button class="btn-save" id="btn-save" onclick="saveProduct()">Enregistrer</button>
     </div>
   </div>
@@ -548,35 +548,42 @@ async function toggleStock(id, cur) {
 }
 
 // ── Gestion photo ──
-function triggerPhotoUpload() {
+// Mode photo en cours : 'modal' ou 'grid'
+let photoUploadMode = null;
+
+function triggerPhotoUpload(e) {
+  if (e) e.stopPropagation(); // empêche la fermeture de la modal
+  photoUploadMode = 'modal';
   document.getElementById('photo-input').click();
 }
 
 // Changer photo directement depuis la grille (sans ouvrir la modal)
 function changePhoto(productId) {
   editingProductId = productId;
+  photoUploadMode = 'grid';
   document.getElementById('photo-input').click();
 }
 
 function onPhotoSelected(e) {
   const file = e.target.files[0];
   if (!file) return;
-  e.target.value = ''; // reset pour pouvoir re-sélectionner le même fichier
+  e.target.value = '';
 
-  // Si on est dans la modal → aperçu local
-  if (document.getElementById('modal-overlay').classList.contains('open')) {
+  if (photoUploadMode === 'modal') {
+    // Aperçu local dans la modal, upload réel au moment de "Enregistrer"
     pendingPhotoFile = file;
     const reader = new FileReader();
     reader.onload = ev => {
       const preview = document.getElementById('modal-photo-preview');
-      preview.innerHTML = `<img src="${ev.target.result}" style="width:100%;height:100%;object-fit:cover;"><div class="modal-photo-change-hint">Changer la photo</div>`;
+      preview.innerHTML = `<img src="${ev.target.result}" style="width:100%;height:100%;object-fit:cover;border-radius:8px;"><div class="modal-photo-change-hint">Changer la photo</div>`;
       preview.onclick = triggerPhotoUpload;
     };
     reader.readAsDataURL(file);
-  } else if (editingProductId) {
+  } else if (photoUploadMode === 'grid' && editingProductId) {
     // Upload direct depuis la grille
     uploadPhotoForProduct(editingProductId, file);
   }
+  photoUploadMode = null;
 }
 
 async function uploadPhotoForProduct(productId, file) {
@@ -618,7 +625,7 @@ function openProductModal(id = null) {
     currentPhotoPath = p.photo_path || null;
     if (currentPhotoPath) {
       const url = getPhotoUrl(currentPhotoPath);
-      preview.innerHTML = `<img src="${url}" style="width:100%;height:100%;object-fit:cover;"><div class="modal-photo-change-hint">Changer la photo</div>`;
+      preview.innerHTML = `<img src="${url}" style="width:100%;height:100%;object-fit:cover;border-radius:6px;"><div class="modal-photo-change-hint">Changer la photo</div>`;
     } else {
       preview.innerHTML = `<div class="modal-photo-preview-empty"><span class="icon">📷</span><span>Cliquer pour ajouter une photo</span></div><div class="modal-photo-change-hint">Ajouter une photo</div>`;
     }
@@ -628,12 +635,16 @@ function openProductModal(id = null) {
     document.getElementById('m-price').value = '';
     preview.innerHTML = `<div class="modal-photo-preview-empty"><span class="icon">📷</span><span>Cliquer pour ajouter une photo</span></div><div class="modal-photo-change-hint">Ajouter une photo</div>`;
   }
-  preview.onclick = triggerPhotoUpload;
+  preview.onclick = (e) => triggerPhotoUpload(e);
   document.getElementById('modal-overlay').classList.add('open');
 }
 
 function closeModal(e) {
   if (e.target.id === 'modal-overlay') document.getElementById('modal-overlay').classList.remove('open');
+}
+
+function cancelModal() {
+  document.getElementById('modal-overlay').classList.remove('open');
 }
 
 async function saveProduct() {
