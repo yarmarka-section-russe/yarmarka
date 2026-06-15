@@ -10,558 +10,230 @@
   @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Inter:wght@400;500;600&display=swap');
 
   :root {
-    --bg: #0d1117;
-    --surface: #161b22;
-    --surface2: #21262d;
-    --border: #30363d;
-    --text: #e6edf3;
-    --muted: #7d8590;
-    --green: #3fb950;
-    --yellow: #d29922;
-    --blue: #58a6ff;
-    --red: #f85149;
-    --or: #D4AF37;
+    --bg: #0d1117; --surface: #161b22; --surface2: #21262d;
+    --border: #30363d; --text: #e6edf3; --muted: #7d8590;
+    --green: #3fb950; --yellow: #d29922; --blue: #58a6ff;
+    --red: #f85149; --or: #D4AF37;
   }
 
   * { margin:0; padding:0; box-sizing:border-box; }
+  body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; min-height: 100vh; }
 
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: 'Inter', sans-serif;
-    min-height: 100vh;
-  }
-
-  /* ── TOP BAR ── */
-  .topbar {
-    background: var(--surface);
-    border-bottom: 1px solid var(--border);
-    padding: 12px 16px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    position: sticky;
-    top: 0;
-    z-index: 100;
-  }
+  /* TOPBAR */
+  .topbar { background: var(--surface); border-bottom: 1px solid var(--border); padding: 12px 16px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; }
   @media (min-width: 768px) { .topbar { padding: 14px 24px; } }
-
-  .topbar-title {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: clamp(0.8rem, 2.5vw, 1rem);
-    font-weight: 700;
-    color: var(--or);
-    letter-spacing: 0.05em;
-  }
+  .topbar-title { font-family: 'JetBrains Mono', monospace; font-size: clamp(0.8rem, 2.5vw, 1rem); font-weight: 700; color: var(--or); letter-spacing: 0.05em; }
   .topbar-sub { font-size: 0.72rem; color: var(--muted); margin-top: 2px; }
-  .live-badge {
-    display: flex; align-items: center; gap: 6px;
-    font-size: 0.72rem; color: var(--green);
-    background: rgba(63,185,80,0.1);
-    border: 1px solid rgba(63,185,80,0.3);
-    border-radius: 20px;
-    padding: 4px 10px;
-    white-space: nowrap;
-  }
-  .live-dot {
-    width: 7px; height: 7px;
-    border-radius: 50%;
-    background: var(--green);
-    animation: pulse-g 2s infinite;
-    flex-shrink: 0;
-  }
+  .live-badge { display: flex; align-items: center; gap: 6px; font-size: 0.72rem; color: var(--green); background: rgba(63,185,80,0.1); border: 1px solid rgba(63,185,80,0.3); border-radius: 20px; padding: 4px 10px; white-space: nowrap; }
+  .live-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--green); animation: pulse-g 2s infinite; flex-shrink: 0; }
   @keyframes pulse-g { 0%,100% { opacity:1; } 50% { opacity:0.4; } }
 
-  /* ── ONGLETS ── */
-  .tabs {
-    display: flex;
-    background: var(--surface);
-    border-bottom: 1px solid var(--border);
-    padding: 0 8px;
-    gap: 0;
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: none;
-  }
+  /* TABS */
+  .tabs { display: flex; background: var(--surface); border-bottom: 1px solid var(--border); padding: 0 8px; overflow-x: auto; scrollbar-width: none; }
   .tabs::-webkit-scrollbar { display: none; }
   @media (min-width: 768px) { .tabs { padding: 0 24px; } }
-
-  .tab {
-    padding: 12px 14px;
-    font-size: 0.8rem;
-    font-weight: 500;
-    color: var(--muted);
-    cursor: pointer;
-    border-bottom: 2px solid transparent;
-    transition: all 0.2s;
-    display: flex; align-items: center; gap: 6px;
-    white-space: nowrap;
-    flex-shrink: 0;
-  }
+  .tab { padding: 12px 14px; font-size: 0.8rem; font-weight: 500; color: var(--muted); cursor: pointer; border-bottom: 2px solid transparent; transition: all 0.2s; display: flex; align-items: center; gap: 6px; white-space: nowrap; flex-shrink: 0; }
   @media (min-width: 768px) { .tab { padding: 12px 20px; font-size: 0.85rem; } }
   .tab:hover { color: var(--text); }
   .tab.active { color: var(--or); border-bottom-color: var(--or); }
-  .tab-badge {
-    background: var(--red);
-    color: white;
-    font-size: 10px;
-    border-radius: 10px;
-    padding: 1px 6px;
-    font-weight: 700;
-    min-width: 18px;
-    text-align: center;
-  }
+  .tab-badge { background: var(--red); color: white; font-size: 10px; border-radius: 10px; padding: 1px 6px; font-weight: 700; min-width: 18px; text-align: center; }
 
-  /* ── CONTENU ── */
+  /* CONTENT */
   .tab-content { display: none; padding: 16px; }
   .tab-content.active { display: block; }
   @media (min-width: 768px) { .tab-content { padding: 24px; max-width: 1100px; margin: 0 auto; } }
 
-  /* ── STATS ── */
-  .stats {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 10px;
-    margin-bottom: 20px;
-  }
-  @media (min-width: 600px) { .stats { grid-template-columns: repeat(2, 1fr); } }
-  @media (min-width: 900px) { .stats { grid-template-columns: repeat(3, 1fr); gap: 14px; margin-bottom: 28px; } }
-
-  .stat-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 14px 16px;
-  }
-  .stat-val {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: clamp(1.4rem, 4vw, 1.8rem);
-    font-weight: 700;
-    color: var(--or);
-  }
+  /* STATS */
+  .stats { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 20px; }
+  @media (min-width: 900px) { .stats { grid-template-columns: repeat(2, 200px); gap: 14px; margin-bottom: 28px; } }
+  .stat-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 14px 16px; }
+  .stat-val { font-family: 'JetBrains Mono', monospace; font-size: clamp(1.4rem, 4vw, 1.8rem); font-weight: 700; color: var(--or); }
   .stat-label { font-size: 0.72rem; color: var(--muted); margin-top: 4px; }
 
-  /* ── COMMANDES ── */
+  /* COMMANDES */
   .orders-grid { display: flex; flex-direction: column; gap: 10px; }
-
   .order-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 12px;
+    background: var(--surface); border: 1px solid var(--border); border-radius: 12px;
     padding: 14px 16px;
-    display: grid;
-    grid-template-columns: 50px 1fr;
-    grid-template-rows: auto auto;
-    gap: 10px 12px;
-    animation: slideIn 0.35s ease;
-    transition: border-color 0.3s, opacity 0.4s;
+    display: grid; grid-template-columns: 50px 1fr; grid-template-rows: auto auto;
+    gap: 10px 12px; animation: slideIn 0.35s ease; transition: border-color 0.3s;
   }
-  /* Sur tablette+, layout 3 colonnes */
-  @media (min-width: 600px) {
-    .order-card {
-      grid-template-columns: 60px 1fr auto;
-      grid-template-rows: auto;
-      padding: 16px 20px;
-      align-items: start;
-    }
-  }
-
+  @media (min-width: 600px) { .order-card { grid-template-columns: 60px 1fr auto; grid-template-rows: auto; padding: 16px 20px; align-items: start; } }
   .order-card:hover { border-color: rgba(212,175,55,0.35); }
-  .order-card.deleting { opacity: 0; transform: translateX(30px); transition: opacity 0.4s ease, transform 0.4s ease; }
-
   @keyframes slideIn { from { opacity:0; transform: translateX(-10px); } to { opacity:1; transform:none; } }
-
-  .order-num-badge {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 1.1rem;
-    font-weight: 700;
-    color: var(--or);
-    background: rgba(212,175,55,0.08);
-    border: 1px solid rgba(212,175,55,0.2);
-    border-radius: 8px;
-    padding: 8px 6px;
-    text-align: center;
-    line-height: 1;
-    align-self: start;
-  }
-
+  .order-num-badge { font-family: 'JetBrains Mono', monospace; font-size: 1.1rem; font-weight: 700; color: var(--or); background: rgba(212,175,55,0.08); border: 1px solid rgba(212,175,55,0.2); border-radius: 8px; padding: 8px 6px; text-align: center; line-height: 1; align-self: start; }
   .order-body { min-width: 0; }
   .order-customer { font-weight: 600; font-size: 0.95rem; }
   .order-phone { font-size: 0.8rem; color: var(--muted); margin-top: 2px; }
   .order-items { margin-top: 8px; display: flex; flex-wrap: wrap; gap: 5px; }
-  .item-chip {
-    background: var(--surface2);
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    padding: 2px 8px;
-    font-size: 0.75rem;
-    color: var(--text);
-  }
-  .order-meta {
-    margin-top: 6px;
-    font-size: 0.75rem;
-    color: var(--muted);
-    display: flex; gap: 10px; flex-wrap: wrap;
-  }
-
-  /* Sur mobile, la colonne droite passe en dessous à droite */
-  .order-right {
-    grid-column: 1 / -1;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
-    gap: 8px;
-    flex-wrap: wrap;
-  }
-  @media (min-width: 600px) {
-    .order-right {
-      grid-column: auto;
-      flex-direction: column;
-      align-items: flex-end;
-      justify-content: flex-start;
-    }
-  }
-
-  .order-total {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 1.1rem;
-    font-weight: 700;
-    color: var(--green);
-    white-space: nowrap;
-  }
-  .pickup-time-badge {
-    background: rgba(88,166,255,0.1);
-    border: 1px solid rgba(88,166,255,0.3);
-    color: var(--blue);
-    border-radius: 6px;
-    padding: 3px 8px;
-    font-size: 0.75rem;
-    font-weight: 600;
-    white-space: nowrap;
-  }
-  .btn-done {
-    background: var(--green);
-    color: #0d1117;
-    border: none;
-    border-radius: 8px;
-    padding: 7px 14px;
-    font-weight: 600;
-    font-size: 0.78rem;
-    cursor: pointer;
-    font-family: 'Inter', sans-serif;
-    transition: all 0.2s;
-    white-space: nowrap;
-  }
+  .item-chip { background: var(--surface2); border: 1px solid var(--border); border-radius: 6px; padding: 2px 8px; font-size: 0.75rem; color: var(--text); }
+  .order-meta { margin-top: 6px; font-size: 0.75rem; color: var(--muted); display: flex; gap: 10px; flex-wrap: wrap; }
+  .order-right { grid-column: 1 / -1; display: flex; flex-direction: row; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: wrap; }
+  @media (min-width: 600px) { .order-right { grid-column: auto; flex-direction: column; align-items: flex-end; justify-content: flex-start; } }
+  .order-total { font-family: 'JetBrains Mono', monospace; font-size: 1.1rem; font-weight: 700; color: var(--green); white-space: nowrap; }
+  .pickup-time-badge { background: rgba(88,166,255,0.1); border: 1px solid rgba(88,166,255,0.3); color: var(--blue); border-radius: 6px; padding: 3px 8px; font-size: 0.75rem; font-weight: 600; white-space: nowrap; }
+  .btn-done { background: var(--green); color: #0d1117; border: none; border-radius: 8px; padding: 7px 14px; font-weight: 600; font-size: 0.78rem; cursor: pointer; font-family: 'Inter', sans-serif; transition: all 0.2s; white-space: nowrap; }
   .btn-done:hover { background: #4dc761; transform: scale(1.04); }
   .btn-done:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
-
-  .empty-state {
-    text-align: center;
-    padding: 50px 20px;
-    color: var(--muted);
-    font-size: 0.9rem;
-  }
+  .empty-state { text-align: center; padding: 50px 20px; color: var(--muted); font-size: 0.9rem; }
   .empty-state .icon { font-size: 2.5rem; margin-bottom: 10px; opacity: 0.4; }
 
-  /* ── SCANNER ── */
+  /* SCANNER */
   .scanner-wrap { max-width: 480px; margin: 0 auto; }
-  #reader {
-    border-radius: 12px;
-    overflow: hidden;
-    border: 2px solid var(--border);
-  }
-  .scan-result {
-    margin-top: 20px;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 18px;
-    display: none;
-  }
+  #reader { border-radius: 12px; overflow: hidden; border: 2px solid var(--border); }
+  .scan-result { margin-top: 20px; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 18px; display: none; }
   .scan-result.show { display: block; animation: slideIn 0.3s ease; }
-  .scan-order-num {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: clamp(1.5rem, 5vw, 2rem);
-    font-weight: 700;
-    color: var(--or);
-    margin-bottom: 4px;
-  }
+  .scan-order-num { font-family: 'JetBrains Mono', monospace; font-size: clamp(1.5rem, 5vw, 2rem); font-weight: 700; color: var(--or); margin-bottom: 4px; }
   .scan-name { font-size: 1rem; font-weight: 600; margin-bottom: 12px; }
   .scan-items { display: flex; flex-direction: column; gap: 6px; }
-  .scan-item-row {
-    display: flex;
-    justify-content: space-between;
-    padding: 8px 12px;
-    background: var(--surface2);
-    border-radius: 8px;
-    font-size: 0.88rem;
-  }
-  .scan-total-row {
-    display: flex;
-    justify-content: space-between;
-    padding: 12px 0 0;
-    border-top: 1px solid var(--border);
-    margin-top: 6px;
-    font-size: 1.05rem;
-    font-weight: 700;
-    color: var(--green);
-  }
-  .btn-terminate {
-    width: 100%;
-    margin-top: 16px;
-    background: var(--red);
-    color: white;
-    border: none;
-    border-radius: 10px;
-    padding: 14px;
-    font-weight: 700;
-    font-size: 1rem;
-    cursor: pointer;
-    font-family: 'Inter', sans-serif;
-    transition: all 0.2s;
-  }
+  .scan-item-row { display: flex; justify-content: space-between; padding: 8px 12px; background: var(--surface2); border-radius: 8px; font-size: 0.88rem; }
+  .scan-total-row { display: flex; justify-content: space-between; padding: 12px 0 0; border-top: 1px solid var(--border); margin-top: 6px; font-size: 1.05rem; font-weight: 700; color: var(--green); }
+  .btn-terminate { width: 100%; margin-top: 16px; background: var(--red); color: white; border: none; border-radius: 10px; padding: 14px; font-weight: 700; font-size: 1rem; cursor: pointer; font-family: 'Inter', sans-serif; transition: all 0.2s; }
   .btn-terminate:hover { background: #ff6b63; }
   .btn-terminate:disabled { opacity: 0.5; cursor: not-allowed; }
-  .terminate-countdown {
-    text-align: center;
-    margin-top: 10px;
-    font-size: 0.8rem;
-    color: var(--muted);
-  }
+  .terminate-countdown { text-align: center; margin-top: 10px; font-size: 0.8rem; color: var(--muted); }
 
-  /* ── PRODUITS ── */
-  .products-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 16px;
-    flex-wrap: wrap;
-    gap: 10px;
-  }
-  .btn-add {
-    background: var(--or);
-    color: #0d1117;
-    border: none;
-    border-radius: 8px;
-    padding: 9px 18px;
-    font-weight: 700;
-    font-size: 0.82rem;
-    cursor: pointer;
-    font-family: 'Inter', sans-serif;
-    transition: all 0.2s;
-  }
+  /* PRODUITS */
+  .products-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 10px; }
+  .btn-add { background: var(--or); color: #0d1117; border: none; border-radius: 8px; padding: 9px 18px; font-weight: 700; font-size: 0.82rem; cursor: pointer; font-family: 'Inter', sans-serif; transition: all 0.2s; }
   .btn-add:hover { background: #e0be3f; }
 
-  .products-table {
+  /* Grille produits admin avec photos */
+  #products-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 14px;
+    padding: 16px;
+  }
+
+  .prod-admin-card {
     background: var(--surface);
     border: 1px solid var(--border);
     border-radius: 12px;
     overflow: hidden;
+    transition: border-color 0.2s;
+    display: flex;
+    flex-direction: column;
   }
+  .prod-admin-card:hover { border-color: rgba(212,175,55,0.35); }
 
-  /* Mobile : cartes produits */
-  .prod-card {
-    padding: 14px 16px;
-    border-bottom: 1px solid var(--border);
+  .prod-admin-photo {
+    width: 100%;
+    aspect-ratio: 4/3;
+    object-fit: cover;
+    display: block;
+    background: var(--surface2);
+  }
+  .prod-admin-photo-placeholder {
+    width: 100%;
+    aspect-ratio: 4/3;
     display: flex;
     align-items: center;
-    gap: 12px;
-    transition: background 0.2s;
-  }
-  .prod-card:last-child { border-bottom: none; }
-  .prod-card:hover { background: var(--surface2); }
-  .prod-card-info { flex: 1; min-width: 0; }
-  .prod-card-name { font-weight: 500; font-size: 0.9rem; }
-  .prod-card-desc { font-size: 0.75rem; color: var(--muted); margin-top: 2px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  .prod-card-price { font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; color: var(--green); white-space: nowrap; margin-right: 4px; }
-  .prod-card-actions { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
-
-  /* Desktop : table */
-  .prod-row {
-    display: none;
-  }
-  @media (min-width: 768px) {
-    .prod-card { display: none; }
-    .prod-row {
-      display: grid;
-      grid-template-columns: 1fr 140px 90px 70px auto;
-      gap: 12px;
-      align-items: center;
-      padding: 13px 20px;
-      border-bottom: 1px solid var(--border);
-      transition: background 0.2s;
-    }
-    .prod-row:last-child { border-bottom: none; }
-    .prod-row:hover { background: var(--surface2); }
-    .prod-row.header {
-      font-size: 0.7rem;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      color: var(--muted);
-      background: var(--surface2);
-      font-weight: 600;
-    }
-    .prod-row.header:hover { background: var(--surface2); }
-    .prod-name { font-weight: 500; font-size: 0.9rem; }
-    .prod-desc { font-size: 0.75rem; color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-    .prod-price { font-family: 'JetBrains Mono', monospace; color: var(--green); font-size: 0.9rem; }
-    .prod-actions { display: flex; gap: 6px; }
-  }
-
-  /* Toggle stock */
-  .toggle-switch {
-    width: 34px; height: 18px;
-    background: var(--border);
-    border-radius: 9px;
-    position: relative;
-    transition: background 0.2s;
+    justify-content: center;
+    background: var(--surface2);
+    font-size: 2rem;
+    color: var(--muted);
     cursor: pointer;
-    border: none;
-    flex-shrink: 0;
+    transition: background 0.2s;
+    position: relative;
   }
-  .toggle-switch::after {
-    content: '';
+  .prod-admin-photo-placeholder:hover { background: #2d333b; }
+  .photo-upload-hint {
     position: absolute;
-    top: 2px; left: 2px;
-    width: 14px; height: 14px;
-    background: white;
-    border-radius: 50%;
-    transition: left 0.2s;
+    bottom: 0; left: 0; right: 0;
+    background: rgba(0,0,0,0.6);
+    color: var(--or);
+    font-size: 0.7rem;
+    text-align: center;
+    padding: 5px;
+    opacity: 0;
+    transition: opacity 0.2s;
   }
+  .prod-admin-photo-placeholder:hover .photo-upload-hint { opacity: 1; }
+  .prod-photo-wrap { position: relative; cursor: pointer; }
+  .prod-photo-overlay {
+    position: absolute; inset: 0;
+    background: rgba(0,0,0,0.5);
+    display: flex; align-items: center; justify-content: center;
+    opacity: 0; transition: opacity 0.2s;
+    color: white; font-size: 0.75rem; font-weight: 600;
+    text-align: center; padding: 8px;
+    flex-direction: column; gap: 4px;
+  }
+  .prod-photo-wrap:hover .prod-photo-overlay { opacity: 1; }
+  .prod-photo-overlay-icon { font-size: 1.4rem; }
+
+  .prod-admin-body { padding: 12px; flex: 1; display: flex; flex-direction: column; gap: 8px; }
+  .prod-admin-name { font-weight: 600; font-size: 0.9rem; color: var(--text); }
+  .prod-admin-desc { font-size: 0.75rem; color: var(--muted); line-height: 1.3; }
+  .prod-admin-price { font-family: 'JetBrains Mono', monospace; color: var(--green); font-size: 0.9rem; }
+  .prod-admin-footer { display: flex; align-items: center; justify-content: space-between; gap: 6px; margin-top: auto; }
+  .prod-admin-actions { display: flex; gap: 5px; }
+
+  .toggle-switch { width: 34px; height: 18px; background: var(--border); border-radius: 9px; position: relative; transition: background 0.2s; cursor: pointer; border: none; flex-shrink: 0; }
+  .toggle-switch::after { content: ''; position: absolute; top: 2px; left: 2px; width: 14px; height: 14px; background: white; border-radius: 50%; transition: left 0.2s; }
   .toggle-switch.on { background: var(--green); }
   .toggle-switch.on::after { left: 18px; }
 
-  .btn-edit, .btn-del {
-    border: 1px solid var(--border);
-    background: transparent;
-    color: var(--text);
-    border-radius: 6px;
-    padding: 5px 8px;
-    font-size: 0.72rem;
-    cursor: pointer;
-    transition: all 0.2s;
-    font-family: 'Inter', sans-serif;
-  }
+  .btn-edit, .btn-del { border: 1px solid var(--border); background: transparent; color: var(--text); border-radius: 6px; padding: 4px 8px; font-size: 0.72rem; cursor: pointer; transition: all 0.2s; font-family: 'Inter', sans-serif; }
   .btn-edit:hover { border-color: var(--blue); color: var(--blue); }
   .btn-del:hover  { border-color: var(--red);  color: var(--red);  }
 
-  /* ── MODAL ── */
-  .modal-overlay {
-    display: none;
-    position: fixed; inset: 0;
-    background: rgba(0,0,0,0.75);
-    z-index: 200;
-    align-items: center;
-    justify-content: center;
-    padding: 16px;
-  }
+  /* Upload input caché */
+  #photo-input { display: none; }
+
+  /* MODAL */
+  .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.75); z-index: 200; align-items: center; justify-content: center; padding: 16px; }
   .modal-overlay.open { display: flex; }
-  .modal {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 16px;
-    padding: 24px;
-    width: 100%;
-    max-width: 440px;
-    animation: fadeUp 0.3s ease;
-  }
+  .modal { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 24px; width: 100%; max-width: 440px; animation: fadeUp 0.3s ease; }
   @keyframes fadeUp { from { opacity:0; transform: translateY(20px); } to { opacity:1; transform:none; } }
-  .modal h3 {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 0.95rem;
-    color: var(--or);
-    margin-bottom: 18px;
-  }
+  .modal h3 { font-family: 'JetBrains Mono', monospace; font-size: 0.95rem; color: var(--or); margin-bottom: 18px; }
   .modal-field { margin-bottom: 12px; }
-  .modal-field label {
-    display: block;
-    font-size: 0.72rem;
-    color: var(--muted);
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    margin-bottom: 6px;
-  }
-  .modal-field input, .modal-field textarea {
-    width: 100%;
-    background: var(--surface2);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 10px 12px;
-    color: var(--text);
-    font-family: 'Inter', sans-serif;
-    font-size: 0.9rem;
-    outline: none;
-    transition: border-color 0.2s;
-  }
+  .modal-field label { display: block; font-size: 0.72rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 6px; }
+  .modal-field input, .modal-field textarea { width: 100%; background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; padding: 10px 12px; color: var(--text); font-family: 'Inter', sans-serif; font-size: 0.9rem; outline: none; transition: border-color 0.2s; }
   .modal-field input:focus, .modal-field textarea:focus { border-color: var(--or); }
   .modal-field textarea { height: 70px; resize: vertical; }
+
+  /* Zone aperçu photo dans modal */
+  .modal-photo-preview {
+    width: 100%; aspect-ratio: 4/3;
+    border-radius: 8px; overflow: hidden;
+    background: var(--surface2);
+    border: 2px dashed var(--border);
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; transition: border-color 0.2s;
+    position: relative; margin-bottom: 12px;
+  }
+  .modal-photo-preview:hover { border-color: var(--or); }
+  .modal-photo-preview img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .modal-photo-preview-empty { text-align: center; color: var(--muted); }
+  .modal-photo-preview-empty .icon { font-size: 2rem; display: block; margin-bottom: 6px; }
+  .modal-photo-preview-empty span { font-size: 0.78rem; }
+  .modal-photo-change-hint { position: absolute; inset: 0; background: rgba(0,0,0,0.55); display: flex; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.2s; color: white; font-size: 0.78rem; font-weight: 600; border-radius: 6px; }
+  .modal-photo-preview:hover .modal-photo-change-hint { opacity: 1; }
+
   .modal-actions { display: flex; gap: 10px; margin-top: 18px; }
-  .btn-save {
-    flex: 1;
-    background: var(--or);
-    color: #0d1117;
-    border: none;
-    border-radius: 8px;
-    padding: 12px;
-    font-weight: 700;
-    cursor: pointer;
-    font-family: 'Inter', sans-serif;
-    transition: all 0.2s;
-  }
+  .btn-save { flex: 1; background: var(--or); color: #0d1117; border: none; border-radius: 8px; padding: 12px; font-weight: 700; cursor: pointer; font-family: 'Inter', sans-serif; transition: all 0.2s; }
   .btn-save:hover { background: #e0be3f; }
-  .btn-cancel {
-    flex: 1;
-    background: transparent;
-    border: 1px solid var(--border);
-    color: var(--text);
-    border-radius: 8px;
-    padding: 12px;
-    cursor: pointer;
-    font-family: 'Inter', sans-serif;
-    transition: all 0.2s;
-  }
+  .btn-cancel { flex: 1; background: transparent; border: 1px solid var(--border); color: var(--text); border-radius: 8px; padding: 12px; cursor: pointer; font-family: 'Inter', sans-serif; }
   .btn-cancel:hover { border-color: var(--text); }
 
-  /* ── NOTIFICATIONS ── */
-  #notif-container {
-    position: fixed;
-    top: 60px; right: 12px;
-    z-index: 300;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    max-width: 280px;
-  }
+  /* NOTIFS */
+  #notif-container { position: fixed; top: 60px; right: 12px; z-index: 300; display: flex; flex-direction: column; gap: 8px; max-width: 280px; }
   @media (min-width: 768px) { #notif-container { top: 70px; right: 20px; max-width: 300px; } }
-  .notif {
-    background: var(--surface);
-    border: 1px solid var(--or);
-    border-radius: 12px;
-    padding: 12px 16px;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.4);
-    animation: slideInRight 0.35s ease;
-  }
+  .notif { background: var(--surface); border: 1px solid var(--or); border-radius: 12px; padding: 12px 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.4); animation: slideInRight 0.35s ease; }
   @keyframes slideInRight { from { opacity:0; transform: translateX(20px); } to { opacity:1; transform:none; } }
   .notif-title { font-weight: 700; font-size: 0.82rem; color: var(--or); margin-bottom: 3px; }
   .notif-body  { font-size: 0.77rem; color: var(--muted); }
 
-  .spinner {
-    display: inline-block;
-    width: 13px; height: 13px;
-    border: 2px solid rgba(255,255,255,0.2);
-    border-top-color: white;
-    border-radius: 50%;
-    animation: spin 0.7s linear infinite;
-    vertical-align: middle;
-    margin-right: 5px;
-  }
+  .spinner { display: inline-block; width: 13px; height: 13px; border: 2px solid rgba(255,255,255,0.2); border-top-color: white; border-radius: 50%; animation: spin 0.7s linear infinite; vertical-align: middle; margin-right: 5px; }
   @keyframes spin { to { transform: rotate(360deg); } }
+
+  .upload-progress { font-size: 0.75rem; color: var(--muted); text-align: center; margin-top: 6px; min-height: 16px; }
 </style>
 </head>
 <body>
 
-<!-- Topbar -->
 <div class="topbar">
   <div>
     <div class="topbar-title">⚙ ADMIN · ЯРМАРКА</div>
@@ -570,81 +242,68 @@
   <div class="live-badge"><div class="live-dot"></div>Temps réel</div>
 </div>
 
-<!-- Onglets -->
 <div class="tabs">
-  <div class="tab active" onclick="switchTab('orders')" id="tab-orders">
-    📋 Commandes <span class="tab-badge" id="order-count-badge">0</span>
-  </div>
-  <div class="tab" onclick="switchTab('scanner')" id="tab-scanner">
-    📷 Scanner QR
-  </div>
-  <div class="tab" onclick="switchTab('products')" id="tab-products">
-    🛒 Produits
-  </div>
+  <div class="tab active" onclick="switchTab('orders')" id="tab-orders">📋 Commandes <span class="tab-badge" id="order-count-badge">0</span></div>
+  <div class="tab" onclick="switchTab('scanner')" id="tab-scanner">📷 Scanner QR</div>
+  <div class="tab" onclick="switchTab('products')" id="tab-products">🛒 Produits</div>
 </div>
 
-<!-- ══ ONGLET : COMMANDES ══ -->
+<!-- COMMANDES -->
 <div class="tab-content active" id="tab-orders-content">
   <div class="stats">
-    <div class="stat-card">
-      <div class="stat-val" id="stat-pending">0</div>
-      <div class="stat-label">En attente</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-val" id="stat-total-orders">0</div>
-      <div class="stat-label">Commandes aujourd'hui</div>
-    </div>
+    <div class="stat-card"><div class="stat-val" id="stat-pending">0</div><div class="stat-label">En attente</div></div>
+    <div class="stat-card"><div class="stat-val" id="stat-total-orders">0</div><div class="stat-label">Commandes aujourd'hui</div></div>
   </div>
   <div class="orders-grid" id="orders-list">
     <div class="empty-state"><div class="icon">🕐</div>Aucune commande pour l'instant…</div>
   </div>
 </div>
 
-<!-- ══ ONGLET : SCANNER ══ -->
+<!-- SCANNER -->
 <div class="tab-content" id="tab-scanner-content">
   <div class="scanner-wrap">
-    <h2 style="font-family:'JetBrains Mono',monospace; font-size:0.95rem; color:var(--or); margin-bottom:14px;">
-      📷 Scanner le QR client
-    </h2>
+    <h2 style="font-family:'JetBrains Mono',monospace;font-size:0.95rem;color:var(--or);margin-bottom:14px;">📷 Scanner le QR client</h2>
     <div id="reader"></div>
-
     <div class="scan-result" id="scan-result">
       <div class="scan-order-num" id="sr-num">#000</div>
       <div class="scan-name" id="sr-name">—</div>
       <div class="scan-items" id="sr-items"></div>
-      <div class="scan-total-row">
-        <span>Total à encaisser</span>
-        <span id="sr-total">0,00 €</span>
-      </div>
-      <button class="btn-terminate" onclick="terminateOrder()" id="btn-terminate">
-        ✓ Terminer et encaisser
-      </button>
+      <div class="scan-total-row"><span>Total à encaisser</span><span id="sr-total">0,00 €</span></div>
+      <button class="btn-terminate" onclick="terminateOrder()" id="btn-terminate">✓ Terminer et encaisser</button>
       <div class="terminate-countdown" id="terminate-msg"></div>
     </div>
   </div>
 </div>
 
-<!-- ══ ONGLET : PRODUITS ══ -->
+<!-- PRODUITS -->
 <div class="tab-content" id="tab-products-content">
   <div class="products-header">
-    <h2 style="font-family:'JetBrains Mono',monospace; font-size:0.95rem; color:var(--or);">Gestion des produits</h2>
+    <h2 style="font-family:'JetBrains Mono',monospace;font-size:0.95rem;color:var(--or);">Gestion des produits</h2>
     <button class="btn-add" onclick="openProductModal()">+ Ajouter un produit</button>
   </div>
-  <div class="products-table" id="products-table">
-    <!-- Header (desktop only via CSS) -->
-    <div class="prod-row header">
-      <div>Produit</div><div>Description</div><div>Prix</div><div>Stock</div><div>Actions</div>
-    </div>
-    <div id="products-list">
-      <div style="padding:20px; color:var(--muted); text-align:center; font-size:0.85rem;">Chargement…</div>
-    </div>
+  <div id="products-list">
+    <div style="padding:20px;color:var(--muted);text-align:center;font-size:0.85rem;">Chargement…</div>
   </div>
 </div>
 
-<!-- Modal produit -->
+<!-- Input photo caché -->
+<input type="file" id="photo-input" accept="image/*">
+
+<!-- MODAL produit -->
 <div class="modal-overlay" id="modal-overlay" onclick="closeModal(event)">
   <div class="modal">
     <h3 id="modal-title">Nouveau produit</h3>
+
+    <!-- Preview photo -->
+    <div class="modal-photo-preview" onclick="triggerPhotoUpload()" id="modal-photo-preview">
+      <div class="modal-photo-preview-empty" id="modal-photo-empty">
+        <span class="icon">📷</span>
+        <span>Cliquer pour ajouter une photo</span>
+      </div>
+      <div class="modal-photo-change-hint">Changer la photo</div>
+    </div>
+    <div class="upload-progress" id="upload-progress"></div>
+
     <div class="modal-field">
       <label>Nom du produit</label>
       <input type="text" id="m-name" placeholder="ex : Blinis au saumon">
@@ -659,18 +318,14 @@
     </div>
     <div class="modal-actions">
       <button class="btn-cancel" onclick="document.getElementById('modal-overlay').classList.remove('open')">Annuler</button>
-      <button class="btn-save" onclick="saveProduct()">Enregistrer</button>
+      <button class="btn-save" id="btn-save" onclick="saveProduct()">Enregistrer</button>
     </div>
   </div>
 </div>
 
-<!-- Notifications -->
 <div id="notif-container"></div>
 
 <script>
-// ══════════════════════════════════════════
-// CONFIG SUPABASE
-// ══════════════════════════════════════════
 const SUPABASE_URL = 'https://bdrhgheeppcmwzjkvyyb.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJkcmhnaGVlcHBjbXd6amt2eXliIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA4MTE0ODYsImV4cCI6MjA5NjM4NzQ4Nn0.V6iV34Vr0AGPlvU886cjeDty-i8qJpwVHsCRjBvnlZg';
 
@@ -680,6 +335,8 @@ const db = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 let orders = [];
 let products = [];
 let editingProductId = null;
+let pendingPhotoFile = null;   // fichier sélectionné pas encore uploadé
+let currentPhotoPath = null;   // path déjà en base pour l'édition
 let currentScannedOrder = null;
 let terminateTimer = null;
 let scannerStarted = false;
@@ -688,6 +345,8 @@ window.onload = async () => {
   await loadOrders();
   await loadProducts();
   subscribeToOrders();
+  // Listener sur l'input file caché
+  document.getElementById('photo-input').addEventListener('change', onPhotoSelected);
 };
 
 // ─────────────────────────────────────────
@@ -695,78 +354,40 @@ window.onload = async () => {
 // ─────────────────────────────────────────
 async function loadOrders() {
   const today = new Date().toISOString().split('T')[0];
-  const { data } = await db
-    .from('orders')
-    .select('*')
-    .gte('created_at', today)
-    .order('created_at', { ascending: false });
+  const { data } = await db.from('orders').select('*').gte('created_at', today).order('created_at', { ascending: false });
   orders = data || [];
-  renderOrders();
-  updateStats();
+  renderOrders(); updateStats();
 }
 
 function subscribeToOrders() {
   db.channel('orders-realtime')
     .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'orders' }, payload => {
-      const o = payload.new;
-      orders.unshift(o);
-      renderOrders();
-      updateStats();
-      showNotif(`🆕 Commande #${o.order_num}`, `${o.customer_name} · retrait ${o.pickup_time}`);
-      if (Notification.permission === 'granted') {
-        new Notification(`🆕 Commande #${o.order_num}`, { body: `${o.customer_name} · retrait ${o.pickup_time}` });
-      }
+      orders.unshift(payload.new);
+      renderOrders(); updateStats();
+      showNotif('🆕 Commande #' + payload.new.order_num, payload.new.customer_name + ' · retrait ' + payload.new.pickup_time);
+      if (Notification.permission === 'granted')
+        new Notification('🆕 Commande #' + payload.new.order_num, { body: payload.new.customer_name + ' · retrait ' + payload.new.pickup_time });
     })
     .on('postgres_changes', { event: 'DELETE', schema: 'public', table: 'orders' }, payload => {
-      // ✅ SYNC : quand une commande est supprimée (depuis scanner OU depuis liste),
-      //    on l'enlève partout
-      const deletedId = payload.old.id;
-      removeOrderFromList(deletedId);
-      updateStats();
+      orders = orders.filter(o => o.id !== payload.old.id);
+      renderOrders(); updateStats();
     })
     .subscribe();
 }
 
-// Supprime une commande de la liste avec animation
-function removeOrderFromList(id) {
-  orders = orders.filter(o => o.id !== id);
-  // Animation de sortie sur la carte si elle est affichée
-  const card = document.getElementById('order-' + id);
-  if (card) {
-    card.classList.add('deleting');
-    setTimeout(() => {
-      renderOrders();
-      updateStats();
-    }, 400);
-  } else {
-    renderOrders();
-    updateStats();
-  }
-}
-
 function renderOrders() {
   const list = document.getElementById('orders-list');
-  const badge = document.getElementById('order-count-badge');
-  badge.textContent = orders.length;
-
-  if (!orders.length) {
-    list.innerHTML = '<div class="empty-state"><div class="icon">🕐</div>Aucune commande pour l\'instant…</div>';
-    return;
-  }
-
+  document.getElementById('order-count-badge').textContent = orders.length;
+  if (!orders.length) { list.innerHTML = '<div class="empty-state"><div class="icon">🕐</div>Aucune commande pour l\'instant…</div>'; return; }
   list.innerHTML = orders.map(o => {
-    const items = o.items || [];
-    const chips = items.map(i => `<span class="item-chip">${i.name} ×${i.qty}</span>`).join('');
-    return `
-    <div class="order-card" id="order-${o.id}">
+    const chips = (o.items||[]).map(i => `<span class="item-chip">${i.name} ×${i.qty}</span>`).join('');
+    return `<div class="order-card" id="order-${o.id}">
       <div class="order-num-badge">#${o.order_num}</div>
       <div class="order-body">
         <div class="order-customer">${o.customer_name}</div>
         <div class="order-phone">📞 ${o.customer_phone}</div>
         <div class="order-items">${chips}</div>
-        <div class="order-meta">
-          <span>🕐 ${new Date(o.created_at).toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'})}</span>
-        </div>
+        <div class="order-meta"><span>🕐 ${new Date(o.created_at).toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'})}</span></div>
       </div>
       <div class="order-right">
         <div class="order-total">${o.total.toFixed(2).replace('.',',')} €</div>
@@ -786,114 +407,59 @@ async function markDone(id, btn) {
   btn.disabled = true;
   btn.style.background = 'var(--yellow)';
   btn.style.color = '#0d1117';
-
   let t = 15;
   btn.textContent = `⏳ ${t}s…`;
-
   const interval = setInterval(async () => {
     t--;
     btn.textContent = `⏳ ${t}s…`;
     if (t <= 0) {
       clearInterval(interval);
-      // Supprime dans Supabase
-      const { error } = await db.from('orders').delete().eq('id', id);
-      if (error) {
-        console.error('Erreur suppression:', error);
-      }
-      // Retire immédiatement du DOM et du tableau local (fallback si realtime lent)
+      await db.from('orders').delete().eq('id', id);
       orders = orders.filter(o => o.id !== id);
       const card = document.getElementById('order-' + id);
       if (card) {
         card.style.transition = 'opacity 0.4s, transform 0.4s';
-        card.style.opacity = '0';
-        card.style.transform = 'translateX(30px)';
+        card.style.opacity = '0'; card.style.transform = 'translateX(30px)';
         setTimeout(() => { renderOrders(); updateStats(); }, 400);
-      } else {
-        renderOrders();
-        updateStats();
-      }
+      } else { renderOrders(); updateStats(); }
     }
   }, 1000);
 }
 
 // ─────────────────────────────────────────
-// SCANNER QR
+// SCANNER
 // ─────────────────────────────────────────
 function switchTab(name) {
   document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
   document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
   document.getElementById('tab-' + name).classList.add('active');
   document.getElementById('tab-' + name + '-content').classList.add('active');
-
-  if (name === 'scanner' && !scannerStarted) {
-    startScanner();
-    scannerStarted = true;
-  }
-  if (name === 'scanner') {
-    Notification.requestPermission();
-  }
+  if (name === 'scanner' && !scannerStarted) { startScanner(); scannerStarted = true; }
+  if (name === 'scanner') Notification.requestPermission();
 }
 
 function startScanner() {
-  const html5QrCode = new Html5Qrcode("reader");
-  html5QrCode.start(
-    { facingMode: "environment" },
-    { fps: 10, qrbox: { width: 220, height: 220 } },
-    async (decodedText) => {
-      html5QrCode.pause();
-      await handleScan(decodedText);
-      setTimeout(() => html5QrCode.resume(), 5000);
-    },
-    () => {}
-  ).catch(() => {
-    // Fallback caméra frontale si pas de caméra arrière
-    html5QrCode.start(
-      { facingMode: "user" },
-      { fps: 10, qrbox: { width: 220, height: 220 } },
-      async (decodedText) => {
-        html5QrCode.pause();
-        await handleScan(decodedText);
-        setTimeout(() => html5QrCode.resume(), 5000);
-      },
-      () => {}
-    );
-  });
+  const qr = new Html5Qrcode("reader");
+  const cfg = { fps: 10, qrbox: { width: 220, height: 220 } };
+  qr.start({ facingMode: "environment" }, cfg, async txt => { qr.pause(); await handleScan(txt); setTimeout(() => qr.resume(), 5000); }, () => {})
+    .catch(() => qr.start({ facingMode: "user" }, cfg, async txt => { qr.pause(); await handleScan(txt); setTimeout(() => qr.resume(), 5000); }, () => {}));
 }
 
 async function handleScan(uuid) {
   const { data, error } = await db.from('orders').select('*').eq('id', uuid).single();
-  if (error || !data) {
-    showResult(null);
-    return;
-  }
-  currentScannedOrder = data;
-  showResult(data);
+  showResult(error || !data ? null : data);
+  if (!error && data) currentScannedOrder = data;
 }
 
 function showResult(order) {
   const el = document.getElementById('scan-result');
-  if (!order) {
-    el.innerHTML = '<div style="text-align:center; color:var(--red); padding:20px;">❌ QR Code invalide ou commande introuvable</div>';
-    el.classList.add('show');
-    return;
-  }
+  if (!order) { el.innerHTML = '<div style="text-align:center;color:var(--red);padding:20px;">❌ QR Code invalide ou commande introuvable</div>'; el.classList.add('show'); return; }
   document.getElementById('sr-num').textContent = '#' + order.order_num;
   document.getElementById('sr-name').textContent = order.customer_name + ' — ' + order.customer_phone;
-
-  const items = order.items || [];
-  document.getElementById('sr-items').innerHTML = items.map(i =>
-    `<div class="scan-item-row">
-      <span>${i.name} ×${i.qty}</span>
-      <strong>${(i.price * i.qty).toFixed(2).replace('.',',')} €</strong>
-    </div>`
-  ).join('');
-
+  document.getElementById('sr-items').innerHTML = (order.items||[]).map(i => `<div class="scan-item-row"><span>${i.name} ×${i.qty}</span><strong>${(i.price*i.qty).toFixed(2).replace('.',',')} €</strong></div>`).join('');
   document.getElementById('sr-total').textContent = order.total.toFixed(2).replace('.',',') + ' €';
   const btn = document.getElementById('btn-terminate');
-  btn.disabled = false;
-  btn.textContent = '✓ Terminer et encaisser';
-  btn.style.background = 'var(--red)';
-  btn.style.color = 'white';
+  btn.disabled = false; btn.textContent = '✓ Terminer et encaisser'; btn.style.background = 'var(--red)'; btn.style.color = 'white';
   document.getElementById('terminate-msg').textContent = '';
   el.classList.add('show');
 }
@@ -901,35 +467,24 @@ function showResult(order) {
 async function terminateOrder() {
   if (!currentScannedOrder) return;
   const btn = document.getElementById('btn-terminate');
-  btn.disabled = true;
-  btn.textContent = '✓ Encaissé !';
-  btn.style.background = 'var(--green)';
-  btn.style.color = '#0d1117';
-
+  btn.disabled = true; btn.textContent = '✓ Encaissé !'; btn.style.background = 'var(--green)'; btn.style.color = '#0d1117';
   const orderId = currentScannedOrder.id;
   let countdown = 15;
   const msg = document.getElementById('terminate-msg');
   msg.textContent = `Suppression dans ${countdown}s…`;
-
   terminateTimer = setInterval(async () => {
     countdown--;
     msg.textContent = `Suppression dans ${countdown}s…`;
     if (countdown <= 0) {
       clearInterval(terminateTimer);
-      // Supprime dans Supabase
       await db.from('orders').delete().eq('id', orderId);
-      // Retire immédiatement du DOM et du tableau local (fallback si realtime lent)
       orders = orders.filter(o => o.id !== orderId);
       const card = document.getElementById('order-' + orderId);
       if (card) {
         card.style.transition = 'opacity 0.4s, transform 0.4s';
-        card.style.opacity = '0';
-        card.style.transform = 'translateX(30px)';
+        card.style.opacity = '0'; card.style.transform = 'translateX(30px)';
         setTimeout(() => { renderOrders(); updateStats(); }, 400);
-      } else {
-        renderOrders();
-        updateStats();
-      }
+      } else { renderOrders(); updateStats(); }
       document.getElementById('scan-result').classList.remove('show');
       currentScannedOrder = null;
     }
@@ -945,67 +500,140 @@ async function loadProducts() {
   renderProducts();
 }
 
+function getPhotoUrl(photoPath) {
+  if (!photoPath) return null;
+  const { data } = db.storage.from('product-photos').getPublicUrl(photoPath);
+  return data.publicUrl;
+}
+
 function renderProducts() {
   const list = document.getElementById('products-list');
   if (!products.length) {
-    list.innerHTML = '<div style="padding:20px; color:var(--muted); text-align:center; font-size:0.85rem;">Aucun produit. Ajoutez-en un !</div>';
+    list.innerHTML = '<div style="padding:20px;color:var(--muted);text-align:center;font-size:0.85rem;grid-column:1/-1;">Aucun produit. Ajoutez-en un !</div>';
     return;
   }
-
-  list.innerHTML = products.map(p => `
-    <!-- MOBILE : carte -->
-    <div class="prod-card">
-      <div class="prod-card-info">
-        <div class="prod-card-name">${p.name}</div>
-        ${p.description ? `<div class="prod-card-desc">${p.description}</div>` : ''}
+  list.innerHTML = products.map(p => {
+    const photoUrl = getPhotoUrl(p.photo_path);
+    const photoHtml = photoUrl
+      ? `<div class="prod-photo-wrap" onclick="changePhoto('${p.id}')">
+           <img class="prod-admin-photo" src="${photoUrl}" alt="${p.name}" loading="lazy">
+           <div class="prod-photo-overlay"><span class="prod-photo-overlay-icon">📷</span>Changer la photo</div>
+         </div>`
+      : `<div class="prod-admin-photo-placeholder" onclick="changePhoto('${p.id}')">
+           📷
+           <div class="photo-upload-hint">Ajouter une photo</div>
+         </div>`;
+    return `
+    <div class="prod-admin-card" id="prod-card-${p.id}">
+      ${photoHtml}
+      <div class="prod-admin-body">
+        <div class="prod-admin-name">${p.name}</div>
+        ${p.description ? `<div class="prod-admin-desc">${p.description}</div>` : ''}
+        <div class="prod-admin-price">${p.price.toFixed(2).replace('.',',')} €</div>
+        <div class="prod-admin-footer">
+          <button class="toggle-switch ${p.in_stock ? 'on' : ''}" title="${p.in_stock ? 'En stock' : 'Épuisé'}" onclick="toggleStock('${p.id}', ${p.in_stock})"></button>
+          <div class="prod-admin-actions">
+            <button class="btn-edit" onclick="openProductModal('${p.id}')">✏</button>
+            <button class="btn-del" onclick="deleteProduct('${p.id}')">🗑</button>
+          </div>
+        </div>
       </div>
-      <div class="prod-card-price">${p.price.toFixed(2).replace('.',',')} €</div>
-      <div class="prod-card-actions">
-        <button class="toggle-switch ${p.in_stock ? 'on' : ''}" onclick="toggleStock('${p.id}', ${p.in_stock})"></button>
-        <button class="btn-edit" onclick="openProductModal('${p.id}')">✏</button>
-        <button class="btn-del" onclick="deleteProduct('${p.id}')">🗑</button>
-      </div>
-    </div>
-    <!-- DESKTOP : ligne tableau -->
-    <div class="prod-row">
-      <div class="prod-name">${p.name}</div>
-      <div class="prod-desc">${p.description || '—'}</div>
-      <div class="prod-price">${p.price.toFixed(2).replace('.',',')} €</div>
-      <div>
-        <button class="toggle-switch ${p.in_stock ? 'on' : ''}" title="${p.in_stock ? 'En stock' : 'Épuisé'}" onclick="toggleStock('${p.id}', ${p.in_stock})"></button>
-      </div>
-      <div class="prod-actions">
-        <button class="btn-edit" onclick="openProductModal('${p.id}')">✏</button>
-        <button class="btn-del" onclick="deleteProduct('${p.id}')">🗑</button>
-      </div>
-    </div>
-  `).join('');
+    </div>`;
+  }).join('');
 }
 
-async function toggleStock(id, currentStatus) {
-  await db.from('products').update({ in_stock: !currentStatus }).eq('id', id);
+async function toggleStock(id, cur) {
+  await db.from('products').update({ in_stock: !cur }).eq('id', id);
   await loadProducts();
 }
 
+// ── Gestion photo ──
+function triggerPhotoUpload() {
+  document.getElementById('photo-input').click();
+}
+
+// Changer photo directement depuis la grille (sans ouvrir la modal)
+function changePhoto(productId) {
+  editingProductId = productId;
+  document.getElementById('photo-input').click();
+}
+
+function onPhotoSelected(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  e.target.value = ''; // reset pour pouvoir re-sélectionner le même fichier
+
+  // Si on est dans la modal → aperçu local
+  if (document.getElementById('modal-overlay').classList.contains('open')) {
+    pendingPhotoFile = file;
+    const reader = new FileReader();
+    reader.onload = ev => {
+      const preview = document.getElementById('modal-photo-preview');
+      preview.innerHTML = `<img src="${ev.target.result}" style="width:100%;height:100%;object-fit:cover;"><div class="modal-photo-change-hint">Changer la photo</div>`;
+      preview.onclick = triggerPhotoUpload;
+    };
+    reader.readAsDataURL(file);
+  } else if (editingProductId) {
+    // Upload direct depuis la grille
+    uploadPhotoForProduct(editingProductId, file);
+  }
+}
+
+async function uploadPhotoForProduct(productId, file) {
+  const ext = file.name.split('.').pop();
+  const path = `${productId}.${ext}`;
+  setUploadProgress('⏳ Upload en cours…');
+
+  const { error: upErr } = await db.storage.from('product-photos').upload(path, file, { upsert: true });
+  if (upErr) { setUploadProgress('❌ Erreur upload'); console.error(upErr); return; }
+
+  await db.from('products').update({ photo_path: path }).eq('id', productId);
+  setUploadProgress('');
+  showNotif('✅ Photo mise à jour', '');
+  await loadProducts();
+  editingProductId = null;
+}
+
+function setUploadProgress(msg) {
+  const el = document.getElementById('upload-progress');
+  if (el) el.textContent = msg;
+}
+
+// ── Modal produit ──
 function openProductModal(id = null) {
   editingProductId = id;
+  pendingPhotoFile = null;
+  currentPhotoPath = null;
+
   document.getElementById('modal-title').textContent = id ? 'Modifier le produit' : 'Nouveau produit';
+  document.getElementById('upload-progress').textContent = '';
+
+  // Reset preview photo
+  const preview = document.getElementById('modal-photo-preview');
   if (id) {
     const p = products.find(x => x.id === id);
     document.getElementById('m-name').value = p.name;
     document.getElementById('m-desc').value = p.description || '';
     document.getElementById('m-price').value = p.price;
+    currentPhotoPath = p.photo_path || null;
+    if (currentPhotoPath) {
+      const url = getPhotoUrl(currentPhotoPath);
+      preview.innerHTML = `<img src="${url}" style="width:100%;height:100%;object-fit:cover;"><div class="modal-photo-change-hint">Changer la photo</div>`;
+    } else {
+      preview.innerHTML = `<div class="modal-photo-preview-empty"><span class="icon">📷</span><span>Cliquer pour ajouter une photo</span></div><div class="modal-photo-change-hint">Ajouter une photo</div>`;
+    }
   } else {
     document.getElementById('m-name').value = '';
     document.getElementById('m-desc').value = '';
     document.getElementById('m-price').value = '';
+    preview.innerHTML = `<div class="modal-photo-preview-empty"><span class="icon">📷</span><span>Cliquer pour ajouter une photo</span></div><div class="modal-photo-change-hint">Ajouter une photo</div>`;
   }
+  preview.onclick = triggerPhotoUpload;
   document.getElementById('modal-overlay').classList.add('open');
 }
 
 function closeModal(e) {
-  if (e.target.id === 'modal-overlay')
-    document.getElementById('modal-overlay').classList.remove('open');
+  if (e.target.id === 'modal-overlay') document.getElementById('modal-overlay').classList.remove('open');
 }
 
 async function saveProduct() {
@@ -1014,29 +642,67 @@ async function saveProduct() {
   const price = parseFloat(document.getElementById('m-price').value);
   if (!name || isNaN(price)) { alert('Merci de remplir le nom et le prix.'); return; }
 
+  const btn = document.getElementById('btn-save');
+  btn.disabled = true;
+  btn.textContent = 'Enregistrement…';
+
+  let photoPath = currentPhotoPath;
+
+  // Upload photo si une nouvelle a été sélectionnée
+  if (pendingPhotoFile) {
+    setUploadProgress('⏳ Upload de la photo…');
+    // On a besoin de l'ID du produit pour nommer le fichier
+    // Si nouveau produit : on insère d'abord sans photo, puis on upload
+    let targetId = editingProductId;
+
+    if (!targetId) {
+      const { data: newProd, error: insErr } = await db.from('products').insert({ name, description: desc, price, in_stock: true }).select().single();
+      if (insErr) { alert('Erreur : ' + insErr.message); btn.disabled = false; btn.textContent = 'Enregistrer'; setUploadProgress(''); return; }
+      targetId = newProd.id;
+    } else {
+      await db.from('products').update({ name, description: desc, price }).eq('id', targetId);
+    }
+
+    const ext = pendingPhotoFile.name.split('.').pop();
+    photoPath = `${targetId}.${ext}`;
+    const { error: upErr } = await db.storage.from('product-photos').upload(photoPath, pendingPhotoFile, { upsert: true });
+    if (upErr) { console.error(upErr); setUploadProgress('❌ Erreur upload photo'); }
+    else { await db.from('products').update({ photo_path: photoPath }).eq('id', targetId); }
+
+    setUploadProgress('');
+    document.getElementById('modal-overlay').classList.remove('open');
+    btn.disabled = false; btn.textContent = 'Enregistrer';
+    await loadProducts();
+    return;
+  }
+
+  // Pas de nouvelle photo
   if (editingProductId) {
     await db.from('products').update({ name, description: desc, price }).eq('id', editingProductId);
   } else {
     await db.from('products').insert({ name, description: desc, price, in_stock: true });
   }
+
   document.getElementById('modal-overlay').classList.remove('open');
+  btn.disabled = false; btn.textContent = 'Enregistrer';
   await loadProducts();
 }
 
 async function deleteProduct(id) {
   if (!confirm('Supprimer ce produit ?')) return;
+  // Supprimer la photo du storage aussi
+  const p = products.find(x => x.id === id);
+  if (p && p.photo_path) await db.storage.from('product-photos').remove([p.photo_path]);
   await db.from('products').delete().eq('id', id);
   await loadProducts();
 }
 
-// ─────────────────────────────────────────
-// NOTIFICATIONS
-// ─────────────────────────────────────────
+// ── Notifications ──
 function showNotif(title, body) {
   const c = document.getElementById('notif-container');
   const n = document.createElement('div');
   n.className = 'notif';
-  n.innerHTML = `<div class="notif-title">${title}</div><div class="notif-body">${body}</div>`;
+  n.innerHTML = `<div class="notif-title">${title}</div>${body ? `<div class="notif-body">${body}</div>` : ''}`;
   c.appendChild(n);
   setTimeout(() => n.remove(), 6000);
 }
