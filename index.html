@@ -295,6 +295,31 @@
   .spinner { display: inline-block; width: 18px; height: 18px; border: 2px solid rgba(255,255,255,0.3); border-top-color: white; border-radius: 50%; animation: spin 0.8s linear infinite; vertical-align: middle; margin-right: 8px; }
   @keyframes spin { to { transform: rotate(360deg); } }
   .empty-cart { text-align: center; padding: 30px 20px; color: rgba(245,236,215,0.3); font-size: 0.9rem; }
+
+  /* ── BOUTON SAVE QR ── */
+  .btn-save-qr {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+    max-width: 300px;
+    margin: 16px auto 0;
+    padding: 14px 20px;
+    border: 1.5px solid rgba(212,175,55,0.4);
+    border-radius: 12px;
+    background: rgba(212,175,55,0.07);
+    color: var(--or);
+    font-family: 'Rubik', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.25s;
+    text-decoration: none;
+  }
+  .btn-save-qr:hover { background: rgba(212,175,55,0.15); border-color: var(--or); transform: translateY(-1px); }
+  .btn-save-qr:active { transform: translateY(0); }
+  .btn-save-qr.saved { border-color: var(--vert); color: #4caf50; background: rgba(46,125,50,0.1); }
 </style>
 </head>
 <body>
