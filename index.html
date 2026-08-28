@@ -384,7 +384,15 @@
     </div>
     <div class="pickup-timer" id="pickup-display" style="text-align:center;">— <span>heure de retrait</span></div>
     <div class="qr-info" id="qr-summary"></div>
-    <p style="text-align:center;margin-top:24px;font-size:0.8rem;color:rgba(245,236,215,0.35);line-height:1.6;">
+
+    <!-- Bouton sauvegarder dans photos -->
+    <div style="text-align:center;">
+      <button class="btn-save-qr" id="btn-save-qr" onclick="saveQRToPhotos()">
+        📥 Sauvegarder dans mes photos
+      </button>
+    </div>
+
+    <p style="text-align:center;margin-top:20px;font-size:0.8rem;color:rgba(245,236,215,0.35);line-height:1.6;">
       Présentez ce QR code lors du retrait.<br>Le paiement se fait sur place.
     </p>
   </div>
@@ -541,6 +549,48 @@ function showQR(order, items, total) {
     `<div class="qr-info-row" style="margin-top:8px;"><span>À payer</span><strong style="color:var(--or);font-size:1.1rem">${total.toFixed(2).replace('.',',')} €</strong></div>`;
   document.getElementById('qrcode').innerHTML = '';
   new QRCode(document.getElementById('qrcode'), { text: order.id, width: 200, height: 200, colorDark: '#1a1008', colorLight: '#ffffff', correctLevel: QRCode.CorrectLevel.H });
+}
+
+function saveQRToPhotos() {
+  const btn = document.getElementById('btn-save-qr');
+  // Récupère le canvas généré par QRCode.js
+  const canvas = document.querySelector('#qrcode canvas');
+  const img    = document.querySelector('#qrcode img');
+
+  let dataUrl = null;
+
+  if (canvas) {
+    // QRCode.js génère un canvas → on l'exporte en PNG
+    dataUrl = canvas.toDataURL('image/png');
+  } else if (img) {
+    // Fallback : QRCode.js a généré une img
+    const c = document.createElement('canvas');
+    c.width = img.naturalWidth || 200;
+    c.height = img.naturalHeight || 200;
+    c.getContext('2d').drawImage(img, 0, 0);
+    dataUrl = c.toDataURL('image/png');
+  }
+
+  if (!dataUrl) { showToast('QR code non prêt, réessaie'); return; }
+
+  // Récupère le numéro de commande pour nommer le fichier
+  const num = document.getElementById('qr-order-num').textContent.replace('#', '');
+
+  // Crée un lien de téléchargement et le clique
+  const a = document.createElement('a');
+  a.href = dataUrl;
+  a.download = `commande-${num}-yarmarka.png`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+
+  // Feedback visuel
+  btn.textContent = '✅ Sauvegardé !';
+  btn.classList.add('saved');
+  setTimeout(() => {
+    btn.textContent = '📥 Sauvegarder dans mes photos';
+    btn.classList.remove('saved');
+  }, 3000);
 }
 
 function showToast(msg) {
